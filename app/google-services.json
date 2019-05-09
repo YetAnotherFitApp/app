@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "15891923868",
+    "firebase_url": "https://yetanotherfitapp.firebaseio.com",
+    "project_id": "yetanotherfitapp",
+    "storage_bucket": "yetanotherfitapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15891923868:android:9b136e87a0a143e2",
+        "android_client_info": {
+          "package_name": "com.example.yetanotherfitapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15891923868-dspnbng2r7lu4sfbfidh2u079h7jbcp0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yetanotherfitapp",
+            "certificate_hash": "bc3c041b2f6e14fdc27d3e965ee6eb0f1be82c06"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsYUBtDSaZ9TH1IaBSDf7d4GOAhX8oZbU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15891923868-3krekble648pmc9mhf6mpgi01k7glrap.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
