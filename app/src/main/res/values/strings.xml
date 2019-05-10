@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">YetAnotherFitApp</string>
+    <string name="welcome">Добро пожаловать!</string>
+    <string name="sign_in">Войти</string>
+    <string name="registration">Зарегистрироваться</string>
+    <string name="yet_another_fitapp">Yet Another FitApp</string>
+    <string name="nickname">Никнейм</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+    <string name="sign_out">Выйти из аккаунта</string>
 </resources>
