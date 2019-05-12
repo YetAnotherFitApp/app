@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/exTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:hint="@string/yet_another_fitapp"
+        android:textSize="30sp" />
+
+    <ImageView
+        android:id="@+id/exImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:id="@+id/exDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/yet_another_fitapp"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/exGetInfoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Info" />
+
+</LinearLayout>
