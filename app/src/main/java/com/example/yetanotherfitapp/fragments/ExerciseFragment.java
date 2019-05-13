@@ -33,13 +33,20 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+//TODO: Добавить refresh()
 
 public class ExerciseFragment extends Fragment {
+
+    private final String DBG = "DBG_TAG";
 
     private FirebaseFirestore mFirebaseFirestore;
     private FirebaseStorage mFirebaseStorage;
     private ExerciseDao mExerciseDao;
     private List<Exercise> mExerciseList;
+    private ExecutorService mExecutorService;
     private TextView mTitle;
     private ImageView mImage;
     private TextView mDescription;
@@ -49,6 +56,7 @@ public class ExerciseFragment extends Fragment {
 
         @Override
         protected List<Exercise> doInBackground(ExerciseDao... exerciseDaos) {
+            Log.d(DBG, Long.toString(Thread.currentThread().getId()));
             return exerciseDaos[0].getAllExercises();
         }
 
@@ -58,22 +66,15 @@ public class ExerciseFragment extends Fragment {
         }
     }
 
-    private class InsertTask extends AsyncTask<Exercise, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Exercise... exercises) {
-            mExerciseDao.insert(exercises[0]);
-            return null;
-        }
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(DBG, Long.toString(Thread.currentThread().getId()));
         super.onCreate(savedInstanceState);
         mFirebaseFirestore = FirebaseFirestore.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
         mExerciseDao = Room.databaseBuilder(getActivity().getApplicationContext(), AppDatabase.class, "main_db").
                 build().getExerciseDao();
+        mExecutorService = Executors.newSingleThreadExecutor();
         new GetExercisesTask().execute(mExerciseDao);
     }
 
@@ -104,7 +105,7 @@ public class ExerciseFragment extends Fragment {
 
     private void getInfo() {
         if (mExerciseList.isEmpty()) {
-            Log.d("DBG", "database is empty");
+            Log.d(DBG, "database is empty");
             mFirebaseFirestore.collection("exercises").
                     document("exercise1").
                     get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -112,21 +113,26 @@ public class ExerciseFragment extends Fragment {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        Exercise exercise = new Exercise(document.getString("title"),
+                        final Exercise exercise = new Exercise(document.getString("title"),
                                 document.getString("image"),
                                 document.getString("description"));
+                        mExecutorService.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(DBG, Long.toString(Thread.currentThread().getId()));
+                                mExerciseDao.insert(exercise);
+                            }
+                        });
                         mTitle.setText(exercise.title);
                         mDescription.setText(exercise.description);
                         getImage(exercise.imageName);
-                        new InsertTask().execute(exercise);
-//                        mExerciseDao.insert(exercise);
                     } else {
                         Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             });
         } else {
-            Log.d("DBG", "database is NOT empty");
+            Log.d(DBG, "database is NOT empty");
             mTitle.setText(mExerciseList.get(0).title);
             mDescription.setText(mExerciseList.get(0).description);
             getImage(mExerciseList.get(0).imageName);
@@ -141,10 +147,10 @@ public class ExerciseFragment extends Fragment {
             }
         });
         if (files.length != 0) {
-            Log.d("DBG", "image exist");
+            Log.d(DBG, "image exist");
             Glide.with(this).load(files[0]).into(mImage);
         } else {
-            Log.d("DBG", "image NOT exist");
+            Log.d(DBG, "image NOT exist");
             final File imageFile = new File(getActivity().getApplicationContext().getFilesDir(), name);
             final Fragment fragment = this;
             StorageReference imageRef = mFirebaseStorage.getReference().child("exercise_pictures/ex1.png");
