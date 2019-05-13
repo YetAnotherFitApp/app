@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/yet_another_fitapp"
+        android:textSize="40sp" />
+
+    <Button
+        android:id="@+id/signOutBtn"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_out" />
+
+    <Button
+        android:id="@+id/goExBtn"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="Перейти к упражнению" />
+
+</LinearLayout>

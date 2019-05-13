@@ -12,11 +12,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.yetanotherfitapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.FilenameFilter;
 
 public class ExerciseFragment extends Fragment {
 
@@ -67,10 +76,40 @@ public class ExerciseFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     mTitle.setText(document.getString("title"));
                     mDescription.setText(document.getString("description"));
+                    getImage(document.getString("image"));
                 } else {
                     Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
+
+    private void getImage(final String name) {
+        File[] files = getActivity().getFilesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String n) {
+                return n.equals(name);
+            }
+        });
+        if (files.length != 0) {
+            Glide.with(this).load(files[0]).into(mImage);
+        } else {
+            final File imageFile = new File(getActivity().getApplicationContext().getFilesDir(), name);
+            final Fragment fragment = this;
+            FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+            StorageReference imageRef = firebaseStorage.getReference().child("exercise_pictures/ex1.png");
+            imageRef.getFile(imageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Glide.with(fragment).load(imageFile).into(mImage);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(fragment.getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+
 }
