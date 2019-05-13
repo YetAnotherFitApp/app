@@ -13,12 +13,6 @@
         android:textSize="40sp" />
 
     <Button
-        android:id="@+id/signOutBtn"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:text="@string/sign_out" />
-
-    <Button
         android:id="@+id/goExBtn"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
