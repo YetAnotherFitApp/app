@@ -71,4 +71,9 @@ public class ExerciseListActivity extends AppCompatActivity implements ExerciseL
         deleteFile(name);
     }
 
+    @Override
+    public void showFail(String errMsg) {
+        Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();
+    }
+
 }

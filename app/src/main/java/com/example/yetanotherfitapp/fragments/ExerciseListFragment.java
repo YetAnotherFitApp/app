@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.database.AppDatabase;
@@ -50,7 +49,6 @@ public class ExerciseListFragment extends Fragment {
     private static final String EXERCISE_NAMES = "exerciseNames";
     private static final String DBG = "DBG_TAG";
     private static final int EXERCISES_COUNT = 9;
-    private final Fragment thisFragment = this;
 
     private FirebaseStorage mFirebaseStorage;
     private FirebaseFirestore mFirebaseFirestore;
@@ -250,7 +248,7 @@ public class ExerciseListFragment extends Fragment {
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(thisFragment.getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                                    mOnExListChangedListener.showFail(e.getMessage());
                                                 }
                                             });
                                             return null;
@@ -266,7 +264,7 @@ public class ExerciseListFragment extends Fragment {
                                         }
                                     }.execute(exercise);
                                 } else {
-                                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                    mOnExListChangedListener.showFail(task.getException().getMessage());
                                 }
                             }
                         });
@@ -308,5 +306,7 @@ public class ExerciseListFragment extends Fragment {
         File getFileByName(String name);
 
         void deleteFileByName(String name);
+
+        void showFail(String errMsg);
     }
 }
