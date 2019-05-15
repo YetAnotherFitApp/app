@@ -230,20 +230,29 @@ public class ExerciseListFragment extends Fragment {
                                             document.getString("image"),
                                             document.getString("description"));
 
-                                    new AsyncTask<Exercise, Void, Void>() {
+                                    new AsyncTask<Exercise, Void, File>() {
 
                                         @Override
-                                        protected Void doInBackground(Exercise... exercises) {
+                                        protected File doInBackground(Exercise... exercises) {
                                             Log.d(DBG, Long.toString(Thread.currentThread().getId()));
                                             Log.d(DBG, "insert exercise");
                                             mExerciseDao.insert(exercises[0]);
+                                            return new File(mOnExListChangedListener.getAppContext().getFilesDir(), exercises[0].imageName);
+                                        }
+
+                                        @Override
+                                        protected void onPostExecute(File imageFile) {
                                             Log.d(DBG, "download image");
-                                            File imageFile = new File(mOnExListChangedListener.getAppContext().getFilesDir(), exercises[0].imageName);
-                                            StorageReference imageRef = mFirebaseStorage.getReference().child("exercise_pictures/" + exercises[0].imageName + ".png");
+                                            StorageReference imageRef = mFirebaseStorage.getReference().child("exercise_pictures/" + exercise.imageName + ".png");
                                             imageRef.getFile(imageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                                                 @Override
                                                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                                                     Log.d(DBG, "download success");
+                                                    mExerciseHashMap.put(exercise.title, exercise);
+                                                    exerciseViewHolder.isLoaded = true;
+                                                    exerciseViewHolder.listElementStateImage.setImageResource(R.drawable.baseline_delete_black_18dp);
+                                                    exerciseViewHolder.listElementProgress.setVisibility(View.GONE);
+                                                    exerciseViewHolder.listElementStateImage.setVisibility(View.VISIBLE);
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
@@ -251,16 +260,6 @@ public class ExerciseListFragment extends Fragment {
                                                     mOnExListChangedListener.showFail(e.getMessage());
                                                 }
                                             });
-                                            return null;
-                                        }
-
-                                        @Override
-                                        protected void onPostExecute(Void aVoid) {
-                                            mExerciseHashMap.put(exercise.title, exercise);
-                                            exerciseViewHolder.isLoaded = true;
-                                            exerciseViewHolder.listElementStateImage.setImageResource(R.drawable.baseline_delete_black_18dp);
-                                            exerciseViewHolder.listElementProgress.setVisibility(View.GONE);
-                                            exerciseViewHolder.listElementStateImage.setVisibility(View.VISIBLE);
                                         }
                                     }.execute(exercise);
                                 } else {

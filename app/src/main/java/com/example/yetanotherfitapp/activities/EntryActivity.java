@@ -18,8 +18,8 @@ import com.google.firebase.auth.FirebaseAuth;
 //TODO: Add design
 //TODO: Add mail check
 //TODO: Add multithreading
-//TODO: Добавить обработку профиля пользователя при успешном входе
 //TODO: Обработка смены конфигурации!
+//TODO: Добавить корректную обработку ошибок!
 //TODO: Clean Architecture
 
 public class EntryActivity extends AppCompatActivity implements EntryFragment.OnAuthStateChangeListener {
