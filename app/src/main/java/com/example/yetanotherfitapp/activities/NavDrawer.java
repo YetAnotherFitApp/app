@@ -2,6 +2,7 @@ package com.example.yetanotherfitapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -43,6 +44,7 @@ public class NavDrawer extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -69,28 +71,12 @@ public class NavDrawer extends AppCompatActivity
         userNameView.setText(userMail.substring(0, userMail.indexOf('@')));
         userMailView.setText(userMail);
 
-//        TextView userNameView = (TextView) findViewById(R.id.userName);
-//        if (userNameView != null) {
-//            userNameView.setText(userMail.substring(0, userMail.indexOf('@')));
-//        }
-//        TextView userMailView = (TextView) findViewById(R.id.userMail);
-//        if (userMailView != null) {
-//            userMailView.setText(userMail);
-//        }
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.container, exerciseListFragment);
+        fragmentTransaction.commit();
 
     }
-
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        View rootView =
-//                inflater.inflate(R.layout.activity_nav_drawer, container, false);
-//
-//        TextView userNameView = (TextView) rootView.findViewById(R.id.userName);
-//        userNameView.setText(userMail.substring(0,userMail.indexOf('@')));
-//        TextView userMailView = (TextView) rootView.findViewById(R.id.userMail);
-//        userMailView.setText(userMail);
-//
-//        return rootView;
-//    }
 
 
     @Override
@@ -140,7 +126,6 @@ public class NavDrawer extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -156,8 +141,7 @@ public class NavDrawer extends AppCompatActivity
 
         } else if (id == R.id.about) {
             fragmentTransaction.replace(R.id.container, aboutFragment);
-        }
-            else if (id == R.id.signOut) {
+        } else if (id == R.id.signOut) {
             signOut();
         }
         fragmentTransaction.commit();
