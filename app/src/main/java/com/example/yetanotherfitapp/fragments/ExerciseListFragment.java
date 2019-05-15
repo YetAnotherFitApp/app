@@ -28,9 +28,14 @@ import com.example.yetanotherfitapp.database.AppDatabase;
 import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.database.ExerciseDao;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,15 +44,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//TODO: add deleting images!!!
-
 public class ExerciseListFragment extends Fragment {
 
     private static final String PREFS_NAME = "exercisePrefs";
     private static final String EXERCISE_NAMES = "exerciseNames";
     private static final String DBG = "DBG_TAG";
     private static final int EXERCISES_COUNT = 9;
+    private final Fragment thisFragment = this;
 
+    private FirebaseStorage mFirebaseStorage;
     private FirebaseFirestore mFirebaseFirestore;
     private OnExListChangedListener mOnExListChangedListener;
     private RecyclerView mRecyclerView;
@@ -60,6 +65,7 @@ public class ExerciseListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mOnExListChangedListener = (OnExListChangedListener) getActivity();
         mFirebaseFirestore = FirebaseFirestore.getInstance();
+        mFirebaseStorage = FirebaseStorage.getInstance();
 
         SharedPreferences exercisePrefs = mOnExListChangedListener.getPrefs(PREFS_NAME);
         Set<String> names = exercisePrefs.getStringSet(EXERCISE_NAMES, null);
@@ -194,6 +200,8 @@ public class ExerciseListFragment extends Fragment {
                             @Override
                             protected Void doInBackground(Exercise... exercises) {
                                 Log.d(DBG, Long.toString(Thread.currentThread().getId()));
+                                Log.d(DBG, "delete image");
+                                mOnExListChangedListener.deleteFileByName(exercises[0].imageName);
                                 Log.d(DBG, "delete exercise");
                                 mExerciseDao.delete(exercises[0]);
                                 return null;
@@ -231,6 +239,20 @@ public class ExerciseListFragment extends Fragment {
                                             Log.d(DBG, Long.toString(Thread.currentThread().getId()));
                                             Log.d(DBG, "insert exercise");
                                             mExerciseDao.insert(exercises[0]);
+                                            Log.d(DBG, "download image");
+                                            File imageFile = new File(mOnExListChangedListener.getAppContext().getFilesDir(), exercises[0].imageName);
+                                            StorageReference imageRef = mFirebaseStorage.getReference().child("exercise_pictures/" + exercises[0].imageName + ".png");
+                                            imageRef.getFile(imageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                                @Override
+                                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                                    Log.d(DBG, "download success");
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(thisFragment.getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                                }
+                                            });
                                             return null;
                                         }
 
@@ -284,5 +306,7 @@ public class ExerciseListFragment extends Fragment {
         Context getAppContext();
 
         File getFileByName(String name);
+
+        void deleteFileByName(String name);
     }
 }

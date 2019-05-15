@@ -10,19 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.yetanotherfitapp.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
-
-//TODO: add progress!!!
 
 public class ExerciseFragment extends Fragment {
 
@@ -31,7 +23,6 @@ public class ExerciseFragment extends Fragment {
     private final static String KEY_IMAGE_NAME = "ImageName";
     private final static String KEY_DESCRIPTION = "Description";
 
-    private FirebaseStorage mFirebaseStorage;
     private ExerciseListFragment.OnExListChangedListener mOnExListChangedListener;
     private String mTitle;
     private String mImageName;
@@ -53,7 +44,6 @@ public class ExerciseFragment extends Fragment {
         mTitle = getArguments().getString(KEY_TITLE);
         mImageName = getArguments().getString(KEY_IMAGE_NAME);
         mDescription = getArguments().getString(KEY_DESCRIPTION);
-        mFirebaseStorage = FirebaseStorage.getInstance();
         mOnExListChangedListener = (ExerciseListFragment.OnExListChangedListener) getActivity();
     }
 
@@ -73,28 +63,8 @@ public class ExerciseFragment extends Fragment {
 
     private void getImage(final String name, final ImageView imageView) {
         File imageFile = mOnExListChangedListener.getFileByName(name);
-
-        if (imageFile == null) {
-            Log.d(DBG, "image doesn't exist");
-            imageFile = new File(mOnExListChangedListener.getAppContext().getFilesDir(), name);
-            final Fragment fragment = this;
-            final File finalImageFile = imageFile;
-            StorageReference imageRef = mFirebaseStorage.getReference().child("exercise_pictures/" + name + ".png");
-            imageRef.getFile(imageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    Glide.with(fragment).load(finalImageFile).into(imageView);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(fragment.getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
-        } else {
-            Log.d(DBG, "image exists");
-            Glide.with(this).load(imageFile).into(imageView);
-        }
+        Log.d(DBG, "get image");
+        Glide.with(this).load(imageFile).into(imageView);
     }
 
 }

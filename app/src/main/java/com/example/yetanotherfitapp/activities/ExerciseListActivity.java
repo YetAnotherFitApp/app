@@ -66,4 +66,9 @@ public class ExerciseListActivity extends AppCompatActivity implements ExerciseL
         return files.length == 0 ? null : files[0];
     }
 
+    @Override
+    public void deleteFileByName(String name) {
+        deleteFile(name);
+    }
+
 }
