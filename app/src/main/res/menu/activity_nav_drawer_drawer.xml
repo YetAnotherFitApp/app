@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/exerciseList"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/exerciseList" />
+        <item
+            android:id="@+id/exercise"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/exercise" />
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/about" />
+
+    </group>
+
+    <item android:title="Other">
+        <menu>
+            <item
+                android:id="@+id/signOut"
+                android:icon="@drawable/common_google_signin_btn_icon_dark"
+                android:title="@string/sign_out" />
+        </menu>
+    </item>
+
+
+
+</menu>

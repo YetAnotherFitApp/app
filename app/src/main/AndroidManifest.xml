@@ -13,7 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".activities.ExerciseListActivity"></activity>
+        <activity
+            android:name=".activities.NavDrawer"
+            android:label="@string/title_activity_nav_drawer"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".activities.ExerciseListActivity" />
         <activity
             android:name=".activities.EntryActivity"
             android:windowSoftInputMode="adjustResize">

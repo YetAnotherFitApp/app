@@ -43,5 +43,4 @@ public class ExerciseListActivity extends AppCompatActivity implements ExerciseL
                 addToBackStack(null).
                 commit();
     }
-
 }
