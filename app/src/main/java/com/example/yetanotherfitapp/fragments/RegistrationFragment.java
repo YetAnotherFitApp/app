@@ -39,12 +39,12 @@ public class RegistrationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_registration, container, false);
 
-        mNicknameField = view.findViewById(R.id.regNickname);
-        mEmailField = view.findViewById(R.id.regEmail);
-        mPasswordField = view.findViewById(R.id.regPassword);
-        mProgressBar = view.findViewById(R.id.regProgress);
+        mNicknameField = view.findViewById(R.id.reg_nickname);
+        mEmailField = view.findViewById(R.id.reg_email);
+        mPasswordField = view.findViewById(R.id.reg_password);
+        mProgressBar = view.findViewById(R.id.reg_progress);
 
-        view.findViewById(R.id.regBtn).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.reg_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());

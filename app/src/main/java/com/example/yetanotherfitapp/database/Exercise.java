@@ -6,7 +6,9 @@ import android.support.annotation.NonNull;
 
 @Entity
 public class Exercise {
-    @PrimaryKey @NonNull public String title;
+    @PrimaryKey
+    @NonNull
+    public String title;
     public String imageName;
     public String description;
 
