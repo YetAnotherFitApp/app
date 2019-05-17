@@ -80,7 +80,8 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
     @Override
     public void success(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(EntryActivity.this, ExerciseListActivity.class);
+        //Intent intent = new Intent(EntryActivity.this, ExerciseListActivity.class);
+        Intent intent = new Intent(EntryActivity.this, NavDrawer.class);
         startActivity(intent);
         finish();
     }
