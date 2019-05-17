@@ -16,8 +16,7 @@
         <activity
             android:name=".activities.NavDrawer"
             android:label="@string/title_activity_nav_drawer"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activities.ExerciseListActivity" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.EntryActivity"
             android:windowSoftInputMode="adjustResize">

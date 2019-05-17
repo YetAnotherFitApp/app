@@ -13,9 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -52,20 +49,25 @@ public class ExerciseListFragment extends Fragment {
 
     private FirebaseStorage mFirebaseStorage;
     private FirebaseFirestore mFirebaseFirestore;
-    private OnExListChangedListener mOnExListChangedListener;
+    private OnExListStateChangedListener mOnExListChangedListener;
     private RecyclerView mRecyclerView;
     private ArrayList<String> mExerciseNames;
     private ExerciseDao mExerciseDao;
     private HashMap<String, Exercise> mExerciseHashMap;
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mOnExListChangedListener = (OnExListStateChangedListener) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mOnExListChangedListener = (OnExListChangedListener) getActivity();
         mFirebaseFirestore = FirebaseFirestore.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
 
-        SharedPreferences exercisePrefs = mOnExListChangedListener.getPrefs(PREFS_NAME);
+        SharedPreferences exercisePrefs = getActivity().getSharedPreferences(PREFS_NAME, 0);
         Set<String> names = exercisePrefs.getStringSet(EXERCISE_NAMES, null);
         if (names == null) {
             Log.d(DBG, "EXERCISE_NAMES doesn't exist");
@@ -76,8 +78,6 @@ public class ExerciseListFragment extends Fragment {
 
         mExerciseDao = Room.databaseBuilder(mOnExListChangedListener.getAppContext(), AppDatabase.class, "main_db").
                 build().getExerciseDao();
-
-        setHasOptionsMenu(true);
     }
 
     private HashSet<String> makeNames() {
@@ -139,6 +139,12 @@ public class ExerciseListFragment extends Fragment {
                 mRecyclerView.setAdapter(new ExerciseAdapter());
             }
         }.execute(mExerciseDao);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mOnExListChangedListener = null;
     }
 
     private class ExerciseViewHolder extends RecyclerView.ViewHolder {
@@ -278,29 +284,11 @@ public class ExerciseListFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.user_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.sign_out) {
-            mOnExListChangedListener.signOut();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public interface OnExListChangedListener {
-        void signOut();
-
-        void goToExercise(Exercise exercise);
-
-        SharedPreferences getPrefs(String prefsName);
+    public interface OnExListStateChangedListener {
 
         Context getAppContext();
+
+        void goToExercise(Exercise exercise);
 
         File getFileByName(String name);
 

@@ -1,5 +1,6 @@
 package com.example.yetanotherfitapp.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,12 +13,12 @@ import com.example.yetanotherfitapp.R;
 
 public class EntryFragment extends Fragment implements View.OnClickListener {
 
-    private OnAuthStateChangeListener onAuthStateChangeListener;
+    private OnAuthStateChangeListener mOnAuthStateChangeListener;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        onAuthStateChangeListener = (OnAuthStateChangeListener) getActivity();
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mOnAuthStateChangeListener = (OnAuthStateChangeListener) context;
     }
 
     @Nullable
@@ -32,13 +33,19 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mOnAuthStateChangeListener = null;
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.entry_reg_btn:
-                onAuthStateChangeListener.needReg();
+                mOnAuthStateChangeListener.needReg();
                 break;
             case R.id.entry_sign_in_btn:
-                onAuthStateChangeListener.needSignIn();
+                mOnAuthStateChangeListener.needSignIn();
                 break;
         }
     }

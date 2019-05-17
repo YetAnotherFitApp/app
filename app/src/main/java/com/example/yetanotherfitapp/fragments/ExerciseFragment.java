@@ -1,5 +1,6 @@
 package com.example.yetanotherfitapp.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,7 +24,7 @@ public class ExerciseFragment extends Fragment {
     private final static String KEY_IMAGE_NAME = "ImageName";
     private final static String KEY_DESCRIPTION = "Description";
 
-    private ExerciseListFragment.OnExListChangedListener mOnExListChangedListener;
+    private ExerciseListFragment.OnExListStateChangedListener mOnExListChangedListener;
     private String mTitle;
     private String mImageName;
     private String mDescription;
@@ -39,12 +40,17 @@ public class ExerciseFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mOnExListChangedListener = (ExerciseListFragment.OnExListStateChangedListener) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTitle = getArguments().getString(KEY_TITLE);
         mImageName = getArguments().getString(KEY_IMAGE_NAME);
         mDescription = getArguments().getString(KEY_DESCRIPTION);
-        mOnExListChangedListener = (ExerciseListFragment.OnExListChangedListener) getActivity();
     }
 
     @Nullable
@@ -59,6 +65,12 @@ public class ExerciseFragment extends Fragment {
         getImage(mImageName, (ImageView) view.findViewById(R.id.ex_image));
 
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mOnExListChangedListener = null;
     }
 
     private void getImage(final String name, final ImageView imageView) {

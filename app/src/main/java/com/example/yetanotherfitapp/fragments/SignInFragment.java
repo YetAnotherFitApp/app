@@ -1,5 +1,6 @@
 package com.example.yetanotherfitapp.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,9 +28,14 @@ public class SignInFragment extends Fragment {
     private EntryFragment.OnAuthStateChangeListener mOnAuthStateChangeListener;
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mOnAuthStateChangeListener = (EntryFragment.OnAuthStateChangeListener) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mOnAuthStateChangeListener = (EntryFragment.OnAuthStateChangeListener) getActivity();
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -50,6 +56,12 @@ public class SignInFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mOnAuthStateChangeListener = null;
     }
 
     private void signIn(String email, String password) {

@@ -1,44 +1,41 @@
 package com.example.yetanotherfitapp.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
-import android.view.ViewGroup;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
+import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.fragments.AboutFragment;
 import com.example.yetanotherfitapp.fragments.ExerciseFragment;
 import com.example.yetanotherfitapp.fragments.ExerciseListFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class NavDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ExerciseListFragment.OnExListChangedListener {
+import java.io.File;
+import java.io.FilenameFilter;
 
-    ExerciseListFragment exerciseListFragment;
-    ExerciseFragment exerciseFragment;
-    AboutFragment aboutFragment;
-    String userName;
-    String userMail;
+public class NavDrawer extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, ExerciseListFragment.OnExListStateChangedListener {
+
+    private String mUserName;
+    private String mUserMail;
+    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,29 +52,21 @@ public class NavDrawer extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        exerciseListFragment = new ExerciseListFragment();
-        exerciseFragment = new ExerciseFragment();
-        aboutFragment = new AboutFragment();
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        userMail = user.getEmail();
+        mUserMail = user.getEmail();
 
-        Log.d("testtt", userMail);
+        Log.d("testtt", mUserMail);
 
         View headerView = navigationView.getHeaderView(0);
-        TextView userNameView = (TextView) headerView.findViewById(R.id.userName);
-        TextView userMailView = (TextView) headerView.findViewById(R.id.userMail);
+        TextView userNameView = headerView.findViewById(R.id.userName);
+        TextView userMailView = headerView.findViewById(R.id.userMail);
 
-        userNameView.setText(userMail.substring(0, userMail.indexOf('@')));
-        userMailView.setText(userMail);
+        userNameView.setText(mUserMail.substring(0, mUserMail.indexOf('@')));
+        userMailView.setText(mUserMail);
 
-
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.container, exerciseListFragment);
-        fragmentTransaction.commit();
-
+        mFragmentManager = getSupportFragmentManager();
+        mFragmentManager.beginTransaction().replace(R.id.container, new ExerciseListFragment()).commit();
     }
-
 
     @Override
     public void onBackPressed() {
@@ -89,36 +78,16 @@ public class NavDrawer extends AppCompatActivity
         }
     }
 
-    public void signOut() {
-        FirebaseAuth.getInstance().signOut();
-        Toast.makeText(this, "Выход из аккаунта", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(NavDrawer.this, EntryActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    public void goToExercise() {
-        getSupportFragmentManager().beginTransaction().
-                replace(R.id.container, new ExerciseFragment()).
-                addToBackStack(null).
-                commit();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.nav_drawer, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -127,20 +96,17 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
 
         if (id == R.id.exerciseList) {
-            fragmentTransaction.replace(R.id.container, exerciseListFragment);
-
+            fragmentTransaction.replace(R.id.container, new ExerciseListFragment());
         } else if (id == R.id.exercise) {
-            fragmentTransaction.replace(R.id.container, exerciseFragment);
-
+            //Пока из этого места некуда перейти
         } else if (id == R.id.about) {
-            fragmentTransaction.replace(R.id.container, aboutFragment);
+            fragmentTransaction.replace(R.id.container, new AboutFragment()).addToBackStack(null);
         } else if (id == R.id.signOut) {
             signOut();
         }
@@ -150,4 +116,48 @@ public class NavDrawer extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void signOut() {
+        FirebaseAuth.getInstance().signOut();
+        Toast.makeText(this, "Выход из аккаунта", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(NavDrawer.this, EntryActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void goToExercise(Exercise exercise) {
+        mFragmentManager.beginTransaction().
+                replace(R.id.container,
+                        ExerciseFragment.newInstance(exercise.title, exercise.imageName, exercise.description)).
+                addToBackStack(null).
+                commit();
+    }
+
+    @Override
+    public Context getAppContext() {
+        return getApplicationContext();
+    }
+
+    @Override
+    public File getFileByName(final String name) {
+        File[] files = getFilesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String n) {
+                return n.equals(name);
+            }
+        });
+        return files.length == 0 ? null : files[0];
+    }
+
+    @Override
+    public void deleteFileByName(String name) {
+        deleteFile(name);
+    }
+
+    @Override
+    public void showFail(String errMsg) {
+        Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();
+    }
+
 }
