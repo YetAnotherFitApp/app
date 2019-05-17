@@ -38,11 +38,11 @@ public class SignInFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_in, container, false);
 
-        mEmailField = view.findViewById(R.id.signInEmail);
-        mPasswordField = view.findViewById(R.id.signInPassword);
-        mProgressBar = view.findViewById(R.id.signInProgress);
+        mEmailField = view.findViewById(R.id.sign_in_email);
+        mPasswordField = view.findViewById(R.id.sign_in_password);
+        mProgressBar = view.findViewById(R.id.sign_in_progress);
 
-        view.findViewById(R.id.signInBtn).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.sign_in_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());

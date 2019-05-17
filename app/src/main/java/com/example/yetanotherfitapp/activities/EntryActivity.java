@@ -18,8 +18,8 @@ import com.google.firebase.auth.FirebaseAuth;
 //TODO: Add design
 //TODO: Add mail check
 //TODO: Add multithreading
-//TODO: Добавить обработку профиля пользователя при успешном входе
 //TODO: Обработка смены конфигурации!
+//TODO: Добавить корректную обработку ошибок!
 //TODO: Clean Architecture
 
 public class EntryActivity extends AppCompatActivity implements EntryFragment.OnAuthStateChangeListener {
@@ -45,7 +45,6 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
     private void showAuthFragment(mAuthState state) {
         Fragment fragment = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_login_container);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         switch (state) {
@@ -60,11 +59,7 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
                 break;
         }
 
-        if (currentFragment == null) {
-            transaction.add(R.id.fragment_login_container, fragment);
-        } else {
-            transaction.replace(R.id.fragment_login_container, fragment);
-        }
+        transaction.replace(R.id.fragment_login_container, fragment);
 
         if (state != mAuthState.ENTRY) {
             transaction.addToBackStack(null);

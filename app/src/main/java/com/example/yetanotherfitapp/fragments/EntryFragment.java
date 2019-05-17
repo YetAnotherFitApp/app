@@ -25,8 +25,8 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_entry, container, false);
 
-        view.findViewById(R.id.entryRegBtn).setOnClickListener(this);
-        view.findViewById(R.id.entrySignInBtn).setOnClickListener(this);
+        view.findViewById(R.id.entry_reg_btn).setOnClickListener(this);
+        view.findViewById(R.id.entry_sign_in_btn).setOnClickListener(this);
 
         return view;
     }
@@ -34,10 +34,10 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.entryRegBtn:
+            case R.id.entry_reg_btn:
                 onAuthStateChangeListener.needReg();
                 break;
-            case R.id.entrySignInBtn:
+            case R.id.entry_sign_in_btn:
                 onAuthStateChangeListener.needSignIn();
                 break;
         }

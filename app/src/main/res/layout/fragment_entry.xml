@@ -14,14 +14,14 @@
         android:textSize="30sp" />
 
     <Button
-        android:id="@+id/entrySignInBtn"
+        android:id="@+id/entry_sign_in_btn"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="@string/sign_in" />
 
     <Button
-        android:id="@+id/entryRegBtn"
+        android:id="@+id/entry_reg_btn"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:text="@string/registration" />
