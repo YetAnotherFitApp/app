@@ -1,91 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".fragments.ProfileFragment">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/EyeImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_gravity="start|center"
-            android:src="@drawable/blue" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/EyeImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/blue" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/UserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Имя"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/UserMail"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Почта"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <android.support.design.widget.FloatingActionButton
+
+                android:id="@+id/ChangeProfileDataBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                app:srcCompat="@drawable/baseline_create_black_18" />
 
             <TextView
-                android:id="@+id/UserName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Имя"
-                android:textSize="20sp" />
+                android:layout_marginTop="32dp"
+                android:text="@string/achievement"
+
+                android:textSize="40sp" />
+
+
+            <ListView
+                android:id="@+id/UserAchievement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"></ListView>
 
             <TextView
-                android:id="@+id/UserMail"
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Почта"
-                android:textSize="15sp" />
+                android:text="@string/statistics"
+                android:textSize="40sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/favourite"
+                android:textSize="40sp"
+                android:textAlignment="center"/>
         </LinearLayout>
 
-    </LinearLayout>
-
-
-    <android.support.design.widget.FloatingActionButton
-
-        android:id="@+id/ChangeProfileDataBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        app:srcCompat="@drawable/baseline_create_black_18" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="32dp"
-        android:text="@string/achievement"
-
-        android:textSize="40sp" />
-
-
-    <ListView
-        android:id="@+id/UserAchievement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"></ListView>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/statistics"
-        android:layout_gravity="center"
-        android:textSize="40sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/favourite"
-        android:layout_gravity="center"
-        android:textSize="40sp" />
+    </ScrollView>
 
 
 </LinearLayout>
