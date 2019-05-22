@@ -1,19 +1,19 @@
 package com.example.yetanotherfitapp.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
-import com.example.yetanotherfitapp.fragments.EntryFragment;
-import com.example.yetanotherfitapp.fragments.RegistrationFragment;
-import com.example.yetanotherfitapp.fragments.SignInFragment;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.yetanotherfitapp.YafaApplication;
+import com.example.yetanotherfitapp.auth.EntryFragment;
+import com.example.yetanotherfitapp.auth.RegistrationFragment;
+import com.example.yetanotherfitapp.auth.SignInFragment;
 
 //TODO: Add design
 //TODO: Add mail check
@@ -24,7 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class EntryActivity extends AppCompatActivity implements EntryFragment.OnAuthStateChangeListener {
 
-    private enum mAuthState {
+    private enum AuthState {
         ENTRY,
         SIGNIN,
         REG
@@ -35,14 +35,16 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            success("Добро пожаловать!");
-        } else {
-            showAuthFragment(mAuthState.ENTRY);
+        if (savedInstanceState == null) {
+            if (YafaApplication.from(this).getAuth().getCurrentUser() != null) {
+                success(getString(R.string.welcome));
+            } else {
+                showAuthFragment(AuthState.ENTRY);
+            }
         }
     }
 
-    private void showAuthFragment(mAuthState state) {
+    private void showAuthFragment(AuthState state) {
         Fragment fragment = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -61,7 +63,7 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
 
         transaction.replace(R.id.fragment_login_container, fragment);
 
-        if (state != mAuthState.ENTRY) {
+        if (state != AuthState.ENTRY) {
             transaction.addToBackStack(null);
         }
         transaction.commit();
@@ -69,19 +71,18 @@ public class EntryActivity extends AppCompatActivity implements EntryFragment.On
 
     @Override
     public void needReg() {
-        showAuthFragment(mAuthState.REG);
+        showAuthFragment(AuthState.REG);
     }
 
     @Override
     public void needSignIn() {
-        showAuthFragment(mAuthState.SIGNIN);
+        showAuthFragment(AuthState.SIGNIN);
     }
 
     @Override
     public void success(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(EntryActivity.this, NavDrawer.class);
-        startActivity(intent);
+        startActivity(new Intent(EntryActivity.this, NavDrawer.class));
         finish();
     }
 

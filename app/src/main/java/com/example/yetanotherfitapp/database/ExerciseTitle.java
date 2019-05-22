@@ -5,16 +5,14 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 @Entity
-public class Exercise {
+public class ExerciseTitle {
     @PrimaryKey
     @NonNull
+    public String id;
     public String title;
-    public String imageName;
-    public String description;
 
-    public Exercise(@NonNull String title, String imageName, String description) {
+    public ExerciseTitle(@NonNull String id, String title) {
+        this.id = id;
         this.title = title;
-        this.imageName = imageName;
-        this.description = description;
     }
 }

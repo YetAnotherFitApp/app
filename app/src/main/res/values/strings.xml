@@ -25,4 +25,7 @@
     <string name="achievement"><u>Достижения</u></string>
     <string name="statistics"><u>Статистика</u></string>
     <string name="favourite"><u>Любимое упражнение</u></string>
+    <string name="error_msg">Поле заполнено некорректно</string>
+    <string name="account_create_success">Аккаунт успешно создан</string>
+    <string name="user_sign_out">Выход из аккаунта</string>
 </resources>

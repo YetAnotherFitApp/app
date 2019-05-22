@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -16,16 +17,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
+import com.example.yetanotherfitapp.YafaApplication;
 import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.fragments.AboutFragment;
 import com.example.yetanotherfitapp.fragments.ExerciseFragment;
 import com.example.yetanotherfitapp.fragments.ExerciseListFragment;
-import com.example.yetanotherfitapp.fragments.ProfileFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -54,26 +54,26 @@ public class NavDrawer extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = YafaApplication.from(this).getAuth().getCurrentUser();
         mUserMail = user.getEmail();
         mUserName = user.getDisplayName();
-
-        Log.d("testtt", mUserMail);
 
         View headerView = navigationView.getHeaderView(0);
         TextView userNameView = headerView.findViewById(R.id.userName);
         TextView userMailView = headerView.findViewById(R.id.userMail);
 
-        userNameView.setText(mUserName);
+        userNameView.setText(mUserMail.substring(0, mUserMail.indexOf('@')));
         userMailView.setText(mUserMail);
 
-        mFragmentManager = getSupportFragmentManager();
-        mFragmentManager.beginTransaction().replace(R.id.container, new ExerciseListFragment()).commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.container, new ExerciseListFragment()).commit();
+        }
 
         headerView.findViewById(R.id.goToProfileBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragmentManager
+                getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, new ProfileFragment())
                         .commit();
@@ -81,7 +81,6 @@ public class NavDrawer extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
             }
         });
-
     }
 
     @Override
@@ -115,10 +114,14 @@ public class NavDrawer extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.container);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if (id == R.id.exerciseList) {
-            fragmentTransaction.replace(R.id.container, new ExerciseListFragment());
+            if (!(currentFragment instanceof ExerciseListFragment)) {
+                fragmentTransaction.replace(R.id.container, new ExerciseListFragment());
+            }
         } else if (id == R.id.exercise) {
             //Пока из этого места некуда перейти
         } else if (id == R.id.about) {
@@ -134,8 +137,8 @@ public class NavDrawer extends AppCompatActivity
     }
 
     private void signOut() {
-        FirebaseAuth.getInstance().signOut();
-        Toast.makeText(this, "Выход из аккаунта", Toast.LENGTH_LONG).show();
+        YafaApplication.from(this).getAuth().signOut();
+        Toast.makeText(this, getResources().getString(R.string.user_sign_out), Toast.LENGTH_LONG).show();
         Intent intent = new Intent(NavDrawer.this, EntryActivity.class);
         startActivity(intent);
         finish();
@@ -143,7 +146,7 @@ public class NavDrawer extends AppCompatActivity
 
     @Override
     public void goToExercise(Exercise exercise) {
-        mFragmentManager.beginTransaction().
+        getSupportFragmentManager().beginTransaction().
                 replace(R.id.container,
                         ExerciseFragment.newInstance(exercise.title, exercise.imageName, exercise.description)).
                 addToBackStack(null).

@@ -1,4 +1,4 @@
-package com.example.yetanotherfitapp.fragments;
+package com.example.yetanotherfitapp.user_account;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
