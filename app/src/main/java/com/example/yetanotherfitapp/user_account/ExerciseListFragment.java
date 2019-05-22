@@ -1,9 +1,7 @@
 package com.example.yetanotherfitapp.user_account;
 
 import android.annotation.SuppressLint;
-import android.arch.persistence.room.Room;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,9 +18,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.yetanotherfitapp.R;
-import com.example.yetanotherfitapp.database.AppDatabase;
+import com.example.yetanotherfitapp.YafaApplication;
 import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.database.ExerciseDao;
+import com.example.yetanotherfitapp.database.ExerciseTitle;
+import com.example.yetanotherfitapp.database.ExerciseTitleDao;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,91 +34,77 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ExerciseListFragment extends Fragment {
 
-    private static final String PREFS_NAME = "exercisePrefs";
-    private static final String EXERCISE_NAMES = "exerciseNames";
     private static final String DBG = "DBG_TAG";
-    private static final int EXERCISES_COUNT = 9;
 
     private FirebaseStorage mFirebaseStorage;
     private FirebaseFirestore mFirebaseFirestore;
     private OnExListStateChangedListener mOnExListChangedListener;
     private RecyclerView mRecyclerView;
-    private ArrayList<String> mExerciseNames;
     private ExerciseDao mExerciseDao;
+    private ExerciseTitleDao mExerciseTitleDao;
     private HashMap<String, Exercise> mExerciseHashMap;
+    private HashMap<String, String> mExerciseTitlesMap;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mOnExListChangedListener = (OnExListStateChangedListener) context;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mFirebaseFirestore = FirebaseFirestore.getInstance();
-        mFirebaseStorage = FirebaseStorage.getInstance();
-
-        SharedPreferences exercisePrefs = getActivity().getSharedPreferences(PREFS_NAME, 0);
-        Set<String> names = exercisePrefs.getStringSet(EXERCISE_NAMES, null);
-        if (names == null) {
-            Log.d(DBG, "EXERCISE_NAMES doesn't exist");
-            names = makeNames();
-            exercisePrefs.edit().putStringSet(EXERCISE_NAMES, names).apply();
-        }
-        mExerciseNames = new ArrayList<>(names);
-
-        mExerciseDao = Room.databaseBuilder(mOnExListChangedListener.getAppContext(), AppDatabase.class, "main_db").
-                build().getExerciseDao();
-    }
-
-    private HashSet<String> makeNames() {
-        HashSet<String> names = new HashSet<>(EXERCISES_COUNT);
-        names.add("Письмо носом");
-        names.add("Пальминг");
-        names.add("Сквозь пальцы");
-        names.add("Движения глазами в стороны");
-        names.add("Большой круг");
-        names.add("Восьмёрка");
-        names.add("Напряжение взгляда");
-        names.add("Взгляд в окно");
-        names.add("Изменение фокусного расстояния");
-        return names;
-    }
-
-    private int getDocNum(String exerciseName) {
-        return exerciseName.equals("Письмо носом") ? 1 :
-                exerciseName.equals("Пальминг") ? 2 :
-                        exerciseName.equals("Сквозь пальцы") ? 3 :
-                                exerciseName.equals("Движения глазами в стороны") ? 4 :
-                                        exerciseName.equals("Большой круг") ? 5 :
-                                                exerciseName.equals("Восьмёрка") ? 6 :
-                                                        exerciseName.equals("Напряжение взгляда") ? 7 :
-                                                                exerciseName.equals("Взгляд в окно") ? 8 :
-                                                                        exerciseName.equals("Изменение фокусного расстояния") ? 9 : -1;
+        mFirebaseFirestore = YafaApplication.from(context).getFirestore();
+        mFirebaseStorage = YafaApplication.from(context).getStorage();
+        mExerciseDao = YafaApplication.from(context).getDataBase().getExerciseDao();
+        mExerciseTitleDao = YafaApplication.from(context).getDataBase().getTitleDao();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_exercise_list, container, false);
-        mRecyclerView = view.findViewById(R.id.exercise_list);
-        return view;
+        return inflater.inflate(R.layout.fragment_exercise_list, container, false);
     }
 
     @SuppressLint("StaticFieldLeak")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mRecyclerView = view.findViewById(R.id.exercise_list);
+        getExerciseTitles();
+    }
 
+    @SuppressLint("StaticFieldLeak")
+    private void getExerciseTitles() {
+        new AsyncTask<ExerciseTitleDao, Void, HashMap<String, String>>() {
+
+            @Override
+            protected HashMap<String, String> doInBackground(ExerciseTitleDao... exerciseTitleDaos) {
+                List<ExerciseTitle> titleList = exerciseTitleDaos[0].getAllTitles();
+                if (titleList.isEmpty()) {
+                    insertTitles(exerciseTitleDaos[0]);
+                    titleList = exerciseTitleDaos[0].getAllTitles();
+                }
+
+                HashMap<String, String> titleMap = new HashMap<>();
+                for (ExerciseTitle exerciseTitle : titleList) {
+                    titleMap.put(exerciseTitle.id, exerciseTitle.title);
+                }
+
+                return titleMap;
+            }
+
+            @Override
+            protected void onPostExecute(HashMap<String, String> stringStringHashMap) {
+                super.onPostExecute(stringStringHashMap);
+                mExerciseTitlesMap = stringStringHashMap;
+                getExistExercises();
+            }
+        }.execute(mExerciseTitleDao);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void getExistExercises() {
         new AsyncTask<ExerciseDao, Void, List<Exercise>>() {
 
             @Override
@@ -139,6 +125,18 @@ public class ExerciseListFragment extends Fragment {
                 mRecyclerView.setAdapter(new ExerciseAdapter());
             }
         }.execute(mExerciseDao);
+    }
+
+    private void insertTitles(ExerciseTitleDao titleDao) {
+        titleDao.insert(new ExerciseTitle("exercise1", "Письмо носом"));
+        titleDao.insert(new ExerciseTitle("exercise2", "Пальминг"));
+        titleDao.insert(new ExerciseTitle("exercise3", "Сквозь пальцы"));
+        titleDao.insert(new ExerciseTitle("exercise4", "Движения глазами в стороны"));
+        titleDao.insert(new ExerciseTitle("exercise5", "Большой круг"));
+        titleDao.insert(new ExerciseTitle("exercise6", "Восьмёрка"));
+        titleDao.insert(new ExerciseTitle("exercise7", "Напряжение взгляда"));
+        titleDao.insert(new ExerciseTitle("exercise8", "Взгляд в окно"));
+        titleDao.insert(new ExerciseTitle("exercise9", "Изменение фокусного расстояния"));
     }
 
     @Override
@@ -175,12 +173,14 @@ public class ExerciseListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final ExerciseViewHolder exerciseViewHolder, int i) {
-            final String exerciseName = mExerciseNames.get(i);
+            final String exerciseId = "exercise" + (i + 1);
+            final String exerciseName = mExerciseTitlesMap.get(exerciseId);
             exerciseViewHolder.isLoaded = mExerciseHashMap.containsKey(exerciseName);
             exerciseViewHolder.listElementTitle.setText(exerciseName);
             int imageStateResource = exerciseViewHolder.isLoaded ? R.drawable.baseline_delete_black_18dp :
                     R.drawable.baseline_backup_black_18dp;
             exerciseViewHolder.listElementStateImage.setImageResource(imageStateResource);
+
             exerciseViewHolder.listElementTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -190,97 +190,111 @@ public class ExerciseListFragment extends Fragment {
                 }
             });
             exerciseViewHolder.listElementStateImage.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("StaticFieldLeak")
+
                 @Override
                 public void onClick(View v) {
                     if (exerciseViewHolder.isLoaded) {
-                        new AsyncTask<Exercise, Void, Void>() {
-                            @Override
-                            protected void onPreExecute() {
-                                exerciseViewHolder.listElementStateImage.setVisibility(View.GONE);
-                                exerciseViewHolder.listElementProgress.setVisibility(View.VISIBLE);
-                            }
-
-                            @Override
-                            protected Void doInBackground(Exercise... exercises) {
-                                Log.d(DBG, Long.toString(Thread.currentThread().getId()));
-                                Log.d(DBG, "delete image");
-                                mOnExListChangedListener.deleteFileByName(exercises[0].imageName);
-                                Log.d(DBG, "delete exercise");
-                                mExerciseDao.delete(exercises[0]);
-                                return null;
-                            }
-
-                            @Override
-                            protected void onPostExecute(Void aVoid) {
-                                mExerciseHashMap.remove(exerciseName);
-                                exerciseViewHolder.isLoaded = false;
-                                exerciseViewHolder.listElementStateImage.setImageResource(R.drawable.baseline_backup_black_18dp);
-                                exerciseViewHolder.listElementProgress.setVisibility(View.GONE);
-                                exerciseViewHolder.listElementStateImage.setVisibility(View.VISIBLE);
-                            }
-                        }.execute(mExerciseHashMap.get(exerciseName));
+                        deleteExercise(exerciseViewHolder, exerciseName);
                     } else {
-                        exerciseViewHolder.listElementStateImage.setVisibility(View.GONE);
-                        exerciseViewHolder.listElementProgress.setVisibility(View.VISIBLE);
-
-                        mFirebaseFirestore.collection("exercises").
-                                document("exercise" + getDocNum(exerciseName)).
-                                get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @SuppressLint("StaticFieldLeak")
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    final Exercise exercise = new Exercise(document.getString("title"),
-                                            document.getString("image"),
-                                            document.getString("description"));
-
-                                    new AsyncTask<Exercise, Void, File>() {
-
-                                        @Override
-                                        protected File doInBackground(Exercise... exercises) {
-                                            Log.d(DBG, Long.toString(Thread.currentThread().getId()));
-                                            Log.d(DBG, "insert exercise");
-                                            mExerciseDao.insert(exercises[0]);
-                                            return new File(mOnExListChangedListener.getAppContext().getFilesDir(), exercises[0].imageName);
-                                        }
-
-                                        @Override
-                                        protected void onPostExecute(File imageFile) {
-                                            Log.d(DBG, "download image");
-                                            StorageReference imageRef = mFirebaseStorage.getReference().child("exercise_pictures/" + exercise.imageName + ".png");
-                                            imageRef.getFile(imageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                                @Override
-                                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                                    Log.d(DBG, "download success");
-                                                    mExerciseHashMap.put(exercise.title, exercise);
-                                                    exerciseViewHolder.isLoaded = true;
-                                                    exerciseViewHolder.listElementStateImage.setImageResource(R.drawable.baseline_delete_black_18dp);
-                                                    exerciseViewHolder.listElementProgress.setVisibility(View.GONE);
-                                                    exerciseViewHolder.listElementStateImage.setVisibility(View.VISIBLE);
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    mOnExListChangedListener.showFail(e.getMessage());
-                                                }
-                                            });
-                                        }
-                                    }.execute(exercise);
-                                } else {
-                                    mOnExListChangedListener.showFail(task.getException().getMessage());
-                                }
-                            }
-                        });
+                        downloadExercise(exerciseId, exerciseViewHolder);
                     }
                 }
             });
         }
 
+        @SuppressLint("StaticFieldLeak")
+        private void deleteExercise(final ExerciseViewHolder exerciseViewHolder, final String exerciseName) {
+            new AsyncTask<Exercise, Void, Void>() {
+                @Override
+                protected void onPreExecute() {
+                    exerciseViewHolder.listElementStateImage.setVisibility(View.GONE);
+                    exerciseViewHolder.listElementProgress.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                protected Void doInBackground(Exercise... exercises) {
+                    Log.d(DBG, Long.toString(Thread.currentThread().getId()));
+                    Log.d(DBG, "delete image");
+                    mOnExListChangedListener.deleteFileByName(exercises[0].imageName);
+                    Log.d(DBG, "delete exercise");
+                    mExerciseDao.delete(exercises[0]);
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    mExerciseHashMap.remove(exerciseName);
+                    exerciseViewHolder.isLoaded = false;
+                    exerciseViewHolder.listElementStateImage.setImageResource(R.drawable.baseline_backup_black_18dp);
+                    exerciseViewHolder.listElementProgress.setVisibility(View.GONE);
+                    exerciseViewHolder.listElementStateImage.setVisibility(View.VISIBLE);
+                }
+            }.execute(mExerciseHashMap.get(exerciseName));
+        }
+
+        private void downloadExercise(String exerciseId, final ExerciseViewHolder exerciseViewHolder) {
+            exerciseViewHolder.listElementStateImage.setVisibility(View.GONE);
+            exerciseViewHolder.listElementProgress.setVisibility(View.VISIBLE);
+
+            mFirebaseFirestore.collection("exercises").
+                    document(exerciseId).
+                    get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+                @SuppressLint("StaticFieldLeak")
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        final Exercise exercise = new Exercise(document.getString("title"),
+                                document.getString("image"),
+                                document.getString("description"));
+                        insertExercise(exercise, exerciseViewHolder);
+                    } else {
+                        mOnExListChangedListener.showFail(task.getException().getMessage());
+                    }
+                }
+            });
+        }
+
+        @SuppressLint("StaticFieldLeak")
+        private void insertExercise(final Exercise exercise, final ExerciseViewHolder exerciseViewHolder) {
+            new AsyncTask<Exercise, Void, File>() {
+
+                @Override
+                protected File doInBackground(Exercise... exercises) {
+                    Log.d(DBG, Long.toString(Thread.currentThread().getId()));
+                    Log.d(DBG, "insert exercise");
+                    mExerciseDao.insert(exercises[0]);
+                    return new File(mOnExListChangedListener.getAppContext().getFilesDir(), exercises[0].imageName);
+                }
+
+                @Override
+                protected void onPostExecute(File imageFile) {
+                    Log.d(DBG, "download image");
+                    StorageReference imageRef = mFirebaseStorage.getReference().child("exercise_pictures/" + exercise.imageName + ".png");
+                    imageRef.getFile(imageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                            Log.d(DBG, "download success");
+                            mExerciseHashMap.put(exercise.title, exercise);
+                            exerciseViewHolder.isLoaded = true;
+                            exerciseViewHolder.listElementStateImage.setImageResource(R.drawable.baseline_delete_black_18dp);
+                            exerciseViewHolder.listElementProgress.setVisibility(View.GONE);
+                            exerciseViewHolder.listElementStateImage.setVisibility(View.VISIBLE);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            mOnExListChangedListener.showFail(e.getMessage());
+                        }
+                    });
+                }
+            }.execute(exercise);
+        }
+
         @Override
         public int getItemCount() {
-            return mExerciseNames.size();
+            return mExerciseTitlesMap.size();
         }
     }
 
