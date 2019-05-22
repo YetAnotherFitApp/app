@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.fragments.AboutFragment;
 import com.example.yetanotherfitapp.fragments.ExerciseFragment;
 import com.example.yetanotherfitapp.fragments.ExerciseListFragment;
+import com.example.yetanotherfitapp.fragments.ProfileFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -54,6 +56,7 @@ public class NavDrawer extends AppCompatActivity
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         mUserMail = user.getEmail();
+        mUserName = user.getDisplayName();
 
         Log.d("testtt", mUserMail);
 
@@ -61,11 +64,24 @@ public class NavDrawer extends AppCompatActivity
         TextView userNameView = headerView.findViewById(R.id.userName);
         TextView userMailView = headerView.findViewById(R.id.userMail);
 
-        userNameView.setText(mUserMail.substring(0, mUserMail.indexOf('@')));
+        userNameView.setText(mUserName);
         userMailView.setText(mUserMail);
 
         mFragmentManager = getSupportFragmentManager();
         mFragmentManager.beginTransaction().replace(R.id.container, new ExerciseListFragment()).commit();
+
+        headerView.findViewById(R.id.goToProfileBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, new ProfileFragment())
+                        .commit();
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        });
+
     }
 
     @Override

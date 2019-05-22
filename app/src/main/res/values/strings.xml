@@ -22,4 +22,7 @@
     <string name="about">About</string>
 
     <string name="hello_blank_fragment">Заготовка страницы About</string>
+    <string name="achievement"><u>Достижения</u></string>
+    <string name="statistics"><u>Статистика</u></string>
+    <string name="favourite"><u>Любимое упражнение</u></string>
 </resources>

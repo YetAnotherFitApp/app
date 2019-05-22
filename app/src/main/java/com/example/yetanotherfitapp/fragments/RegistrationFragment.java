@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class RegistrationFragment extends Fragment {
 
@@ -53,7 +54,7 @@ public class RegistrationFragment extends Fragment {
         view.findViewById(R.id.reg_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
+                createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString(), mNicknameField.getText().toString());
             }
         });
 
@@ -66,13 +67,14 @@ public class RegistrationFragment extends Fragment {
         mOnAuthStateChangeListener = null;
     }
 
-    private void createAccount(String email, String password) {
+    private void createAccount(String email, String password, final String nickname) {
         showProgress();
 
         if (!validateForm()) {
             hideProgress();
             return;
         }
+
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -81,6 +83,7 @@ public class RegistrationFragment extends Fragment {
                         hideProgress();
 
                         if (task.isSuccessful()) {
+                            mAuth.getCurrentUser().updateProfile( new UserProfileChangeRequest.Builder().setDisplayName(nickname).build());
                             mOnAuthStateChangeListener.success("Аккаунт успешно создан");
                         } else {
                             mOnAuthStateChangeListener.fail(task.getException().getMessage());
