@@ -19,7 +19,7 @@ import com.example.yetanotherfitapp.R;
 public class SignInFragment extends Fragment {
 
     private EntryFragment.OnAuthStateChangeListener mOnAuthStateChangeListener;
-    private SignInViewModel mSignInViewModel;
+    private AuthViewModel mAuthViewModel;
 
     @Override
     public void onAttach(Context context) {
@@ -36,7 +36,7 @@ public class SignInFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mSignInViewModel = ViewModelProviders.of(this).get(SignInViewModel.class);
+        mAuthViewModel = ViewModelProviders.of(this).get(AuthViewModel.class);
 
         final EditText email = view.findViewById(R.id.sign_in_email);
         final EditText password = view.findViewById(R.id.sign_in_password);
@@ -46,14 +46,14 @@ public class SignInFragment extends Fragment {
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSignInViewModel.signIn(email.getText().toString(), password.getText().toString());
+                mAuthViewModel.signIn(email.getText().toString(), password.getText().toString());
             }
         });
 
-        mSignInViewModel.getState().observe(this, new Observer<SignInViewModel.SignInState>() {
+        mAuthViewModel.getSignInState().observe(this, new Observer<AuthViewModel.AuthState>() {
             @Override
-            public void onChanged(@Nullable SignInViewModel.SignInState signInState) {
-                switch (signInState) {
+            public void onChanged(@Nullable AuthViewModel.AuthState authState) {
+                switch (authState) {
                     case ERROR_EMAIL:
                         email.setError(getResources().getString(R.string.error_msg));
                         password.setError(null);
@@ -84,7 +84,7 @@ public class SignInFragment extends Fragment {
                         password.setError(null);
                         progressBar.setVisibility(View.GONE);
                         signInBtn.setEnabled(true);
-                        String errMsg = mSignInViewModel.getErrorMessage().getValue();
+                        String errMsg = mAuthViewModel.getErrorMessage().getValue();
                         mOnAuthStateChangeListener.fail(errMsg);
                         break;
                     case NONE:

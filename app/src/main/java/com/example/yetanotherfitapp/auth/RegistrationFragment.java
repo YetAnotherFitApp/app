@@ -1,32 +1,26 @@
 package com.example.yetanotherfitapp.auth;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.example.yetanotherfitapp.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 
+//TODO: Не забудь про никнейм!!!
 public class RegistrationFragment extends Fragment {
 
-    private FirebaseAuth mAuth;
-    private EditText mNicknameField; //на будущее
-    private EditText mEmailField;
-    private EditText mPasswordField;
-    private ProgressBar mProgressBar;
     private EntryFragment.OnAuthStateChangeListener mOnAuthStateChangeListener;
+    private AuthViewModel mAuthViewModel;
 
     @Override
     public void onAttach(Context context) {
@@ -34,30 +28,76 @@ public class RegistrationFragment extends Fragment {
         mOnAuthStateChangeListener = (EntryFragment.OnAuthStateChangeListener) context;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_registration, container, false);
+        return inflater.inflate(R.layout.fragment_registration, container, false);
+    }
 
-        mNicknameField = view.findViewById(R.id.reg_nickname);
-        mEmailField = view.findViewById(R.id.reg_email);
-        mPasswordField = view.findViewById(R.id.reg_password);
-        mProgressBar = view.findViewById(R.id.reg_progress);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mAuthViewModel = ViewModelProviders.of(this).get(AuthViewModel.class);
 
-        view.findViewById(R.id.reg_btn).setOnClickListener(new View.OnClickListener() {
+        EditText nickname = view.findViewById(R.id.reg_nickname);
+        final EditText email = view.findViewById(R.id.reg_email);
+        final EditText password = view.findViewById(R.id.reg_password);
+        final ProgressBar progressBar = view.findViewById(R.id.reg_progress);
+        final Button regBtn = view.findViewById(R.id.reg_btn);
+
+        regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
+                mAuthViewModel.createAccount(email.getText().toString(), password.getText().toString());
             }
         });
 
-        return view;
+        mAuthViewModel.getRegState().observe(this, new Observer<AuthViewModel.AuthState>() {
+            @Override
+            public void onChanged(@Nullable AuthViewModel.AuthState authState) {
+                switch (authState) {
+                    case ERROR_EMAIL:
+                        email.setError(getResources().getString(R.string.error_msg));
+                        password.setError(null);
+                        progressBar.setVisibility(View.GONE);
+                        regBtn.setEnabled(true);
+                        break;
+                    case ERROR_PASSWORD:
+                        email.setError(null);
+                        password.setError(getResources().getString(R.string.error_msg));
+                        progressBar.setVisibility(View.GONE);
+                        regBtn.setEnabled(true);
+                        break;
+                    case PROGRESS:
+                        email.setError(null);
+                        password.setError(null);
+                        progressBar.setVisibility(View.VISIBLE);
+                        regBtn.setEnabled(false);
+                        break;
+                    case SUCCESS:
+                        email.setError(null);
+                        password.setError(null);
+                        progressBar.setVisibility(View.GONE);
+                        regBtn.setEnabled(false);
+                        mOnAuthStateChangeListener.success(getResources().getString(R.string.account_create_success));
+                        break;
+                    case FAILED:
+                        email.setError(null);
+                        password.setError(null);
+                        progressBar.setVisibility(View.GONE);
+                        regBtn.setEnabled(true);
+                        String errMsg = mAuthViewModel.getErrorMessage().getValue();
+                        mOnAuthStateChangeListener.fail(errMsg);
+                        break;
+                    case NONE:
+                        email.setError(null);
+                        password.setError(null);
+                        progressBar.setVisibility(View.GONE);
+                        regBtn.setEnabled(true);
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -66,57 +106,4 @@ public class RegistrationFragment extends Fragment {
         mOnAuthStateChangeListener = null;
     }
 
-    private void createAccount(String email, String password) {
-        showProgress();
-
-        if (!validateForm()) {
-            hideProgress();
-            return;
-        }
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        hideProgress();
-
-                        if (task.isSuccessful()) {
-                            mOnAuthStateChangeListener.success("Аккаунт успешно создан");
-                        } else {
-                            mOnAuthStateChangeListener.fail(task.getException().getMessage());
-                        }
-                    }
-                });
-
-    }
-
-    private boolean validateForm() {
-        boolean valid = true;
-
-        String email = mEmailField.getText().toString();
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEmailField.setError("Поле заполнено некорректно");
-            valid = false;
-        } else {
-            mEmailField.setError(null);
-        }
-
-        String password = mPasswordField.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            mPasswordField.setError("Поле заполнено некорректно");
-            valid = false;
-        } else {
-            mPasswordField.setError(null);
-        }
-
-        return valid;
-    }
-
-    private void showProgress() {
-        mProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    public void hideProgress() {
-        mProgressBar.setVisibility(View.GONE);
-    }
 }
