@@ -24,12 +24,14 @@ public class EntryFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_entry, container, false);
+        return inflater.inflate(R.layout.fragment_entry, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         view.findViewById(R.id.entry_reg_btn).setOnClickListener(this);
         view.findViewById(R.id.entry_sign_in_btn).setOnClickListener(this);
-
-        return view;
     }
 
     @Override

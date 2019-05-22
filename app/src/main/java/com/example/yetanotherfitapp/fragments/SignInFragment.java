@@ -1,31 +1,25 @@
 package com.example.yetanotherfitapp.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.example.yetanotherfitapp.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class SignInFragment extends Fragment {
 
-    private FirebaseAuth mAuth;
-    private EditText mEmailField;
-    private EditText mPasswordField;
-    private ProgressBar mProgressBar;
     private EntryFragment.OnAuthStateChangeListener mOnAuthStateChangeListener;
+    private SignInViewModel mSignInViewModel;
 
     @Override
     public void onAttach(Context context) {
@@ -33,89 +27,81 @@ public class SignInFragment extends Fragment {
         mOnAuthStateChangeListener = (EntryFragment.OnAuthStateChangeListener) context;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sign_in, container, false);
+        return inflater.inflate(R.layout.fragment_sign_in, container, false);
+    }
 
-        mEmailField = view.findViewById(R.id.sign_in_email);
-        mPasswordField = view.findViewById(R.id.sign_in_password);
-        mProgressBar = view.findViewById(R.id.sign_in_progress);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mSignInViewModel = ViewModelProviders.of(this).get(SignInViewModel.class);
 
-        view.findViewById(R.id.sign_in_btn).setOnClickListener(new View.OnClickListener() {
+        final EditText email = view.findViewById(R.id.sign_in_email);
+        final EditText password = view.findViewById(R.id.sign_in_password);
+        final ProgressBar progressBar = view.findViewById(R.id.sign_in_progress);
+        final Button signInBtn = view.findViewById(R.id.sign_in_btn);
+
+        signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+                mSignInViewModel.signIn(email.getText().toString(), password.getText().toString());
             }
         });
 
-        return view;
+        mSignInViewModel.getState().observe(this, new Observer<SignInViewModel.SignInState>() {
+            @Override
+            public void onChanged(@Nullable SignInViewModel.SignInState signInState) {
+                switch (signInState) {
+                    case ERROR_EMAIL:
+                        email.setError(getResources().getString(R.string.error_msg));
+                        password.setError(null);
+                        progressBar.setVisibility(View.GONE);
+                        signInBtn.setEnabled(true);
+                        break;
+                    case ERROR_PASSWORD:
+                        email.setError(null);
+                        password.setError(getResources().getString(R.string.error_msg));
+                        progressBar.setVisibility(View.GONE);
+                        signInBtn.setEnabled(true);
+                        break;
+                    case PROGRESS:
+                        email.setError(null);
+                        password.setError(null);
+                        progressBar.setVisibility(View.VISIBLE);
+                        signInBtn.setEnabled(false);
+                        break;
+                    case SUCCESS:
+                        email.setError(null);
+                        password.setError(null);
+                        progressBar.setVisibility(View.GONE);
+                        signInBtn.setEnabled(false);
+                        mOnAuthStateChangeListener.success(getResources().getString(R.string.welcome));
+                        break;
+                    case FAILED:
+                        email.setError(null);
+                        password.setError(null);
+                        progressBar.setVisibility(View.GONE);
+                        signInBtn.setEnabled(true);
+                        String errMsg = mSignInViewModel.getErrorMessage().getValue();
+                        mOnAuthStateChangeListener.fail(errMsg);
+                        break;
+                    case NONE:
+                        email.setError(null);
+                        password.setError(null);
+                        progressBar.setVisibility(View.GONE);
+                        signInBtn.setEnabled(true);
+                        break;
+                }
+            }
+        });
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mOnAuthStateChangeListener = null;
-    }
-
-    private void signIn(String email, String password) {
-        showProgress();
-
-        if (!validateForm()) {
-            hideProgress();
-            return;
-        }
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        hideProgress();
-
-                        if (task.isSuccessful()) {
-                            mOnAuthStateChangeListener.success("Добро пожаловать!");
-                        } else {
-                            mOnAuthStateChangeListener.fail(task.getException().getMessage());
-                        }
-                    }
-                });
-    }
-
-    private boolean validateForm() {
-        boolean valid = true;
-
-        String email = mEmailField.getText().toString();
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEmailField.setError("Поле заполнено некорректно");
-            valid = false;
-        } else {
-            mEmailField.setError(null);
-        }
-
-        String password = mPasswordField.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            mPasswordField.setError("Поле заполнено некорректно");
-            valid = false;
-        } else {
-            mPasswordField.setError(null);
-        }
-
-        return valid;
-    }
-
-    private void showProgress() {
-        mProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    public void hideProgress() {
-        mProgressBar.setVisibility(View.GONE);
     }
 
 }
