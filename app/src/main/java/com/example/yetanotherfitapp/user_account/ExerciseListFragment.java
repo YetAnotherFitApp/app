@@ -1,4 +1,4 @@
-package com.example.yetanotherfitapp.fragments;
+package com.example.yetanotherfitapp.user_account;
 
 import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;

@@ -1,4 +1,4 @@
-package com.example.yetanotherfitapp.fragments;
+package com.example.yetanotherfitapp.auth;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -10,7 +10,7 @@ import android.util.Patterns;
 
 public class SignInViewModel extends AndroidViewModel {
 
-    enum SignInState {
+    public enum SignInState {
         NONE,
         ERROR_EMAIL,
         ERROR_PASSWORD,

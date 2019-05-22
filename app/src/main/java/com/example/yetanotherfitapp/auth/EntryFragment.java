@@ -1,4 +1,4 @@
-package com.example.yetanotherfitapp.fragments;
+package com.example.yetanotherfitapp.auth;
 
 import android.content.Context;
 import android.os.Bundle;

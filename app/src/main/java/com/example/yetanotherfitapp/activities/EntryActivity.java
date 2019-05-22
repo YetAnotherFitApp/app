@@ -11,9 +11,9 @@ import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
-import com.example.yetanotherfitapp.fragments.EntryFragment;
-import com.example.yetanotherfitapp.fragments.RegistrationFragment;
-import com.example.yetanotherfitapp.fragments.SignInFragment;
+import com.example.yetanotherfitapp.auth.EntryFragment;
+import com.example.yetanotherfitapp.auth.RegistrationFragment;
+import com.example.yetanotherfitapp.auth.SignInFragment;
 
 //TODO: Add design
 //TODO: Add mail check

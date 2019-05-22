@@ -21,9 +21,9 @@ import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.database.Exercise;
-import com.example.yetanotherfitapp.fragments.AboutFragment;
-import com.example.yetanotherfitapp.fragments.ExerciseFragment;
-import com.example.yetanotherfitapp.fragments.ExerciseListFragment;
+import com.example.yetanotherfitapp.user_account.AboutFragment;
+import com.example.yetanotherfitapp.user_account.ExerciseFragment;
+import com.example.yetanotherfitapp.user_account.ExerciseListFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
