@@ -1,4 +1,4 @@
-package com.example.yetanotherfitapp;
+package com.example.yetanotherfitapp.auth;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -32,13 +32,14 @@ public class AuthRepo {
                 });
     }
 
-    public void createAccount(String email, String password, final AuthProgress progress) {
+    public void createAccount(String email, String password, final String nickname, final AuthProgress progress) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest());
+                            //mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest());
+                            mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(nickname).build());
                             progress.onSuccess();
                         } else {
                             progress.onFailed(task.getException().getMessage());

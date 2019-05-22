@@ -39,7 +39,7 @@ public class RegistrationFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mAuthViewModel = ViewModelProviders.of(this).get(AuthViewModel.class);
 
-        EditText nickname = view.findViewById(R.id.reg_nickname);
+        final EditText nickname = view.findViewById(R.id.reg_nickname);
         final EditText email = view.findViewById(R.id.reg_email);
         final EditText password = view.findViewById(R.id.reg_password);
         final ProgressBar progressBar = view.findViewById(R.id.reg_progress);
@@ -48,7 +48,7 @@ public class RegistrationFragment extends Fragment {
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuthViewModel.createAccount(email.getText().toString(), password.getText().toString());
+                mAuthViewModel.createAccount(email.getText().toString(), password.getText().toString(), nickname.getText().toString());
             }
         });
 

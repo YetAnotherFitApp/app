@@ -8,8 +8,6 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Patterns;
 
-import com.example.yetanotherfitapp.AuthRepo;
-
 public class AuthViewModel extends AndroidViewModel {
 
     public enum AuthState {
@@ -73,19 +71,19 @@ public class AuthViewModel extends AndroidViewModel {
         });
     }
 
-    public void createAccount(String email, String password) {
+    public void createAccount(String email, String password, String nickname) {
         if (!isValidEmail(email)) {
             mRegState.postValue(AuthState.ERROR_EMAIL);
         } else if (!isValidPassword(password)) {
             mRegState.postValue(AuthState.ERROR_PASSWORD);
         } else {
-            requestCreateAccount(email, password);
+            requestCreateAccount(email, password, nickname);
         }
     }
 
-    private void requestCreateAccount(String email, String password) {
+    private void requestCreateAccount(String email, String password, String nickname) {
         mRegState.postValue(AuthState.PROGRESS);
-        new AuthRepo(getApplication()).createAccount(email, password, new AuthRepo.AuthProgress() {
+        new AuthRepo(getApplication()).createAccount(email, password, nickname, new AuthRepo.AuthProgress() {
             @Override
             public void onSuccess() {
                 mRegState.postValue(AuthState.SUCCESS);

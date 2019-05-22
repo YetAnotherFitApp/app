@@ -73,7 +73,7 @@ public class NavDrawer extends AppCompatActivity
             public void onClick(View v) {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, new ProfileFragment())
+                        .replace(R.id.container, new com.example.yetanotherfitapp.fragments.ProfileFragment())
                         .commit();
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
