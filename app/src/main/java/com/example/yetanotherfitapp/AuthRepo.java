@@ -1,4 +1,4 @@
-package com.example.yetanotherfitapp.auth;
+package com.example.yetanotherfitapp;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class AuthRepo {
 
@@ -37,6 +38,7 @@ public class AuthRepo {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest());
                             progress.onSuccess();
                         } else {
                             progress.onFailed(task.getException().getMessage());

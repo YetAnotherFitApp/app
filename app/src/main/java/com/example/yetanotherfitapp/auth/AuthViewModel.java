@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Patterns;
 
+import com.example.yetanotherfitapp.AuthRepo;
+
 public class AuthViewModel extends AndroidViewModel {
 
     public enum AuthState {
