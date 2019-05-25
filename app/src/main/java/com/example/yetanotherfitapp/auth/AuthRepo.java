@@ -38,7 +38,6 @@ public class AuthRepo {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            //mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest());
                             mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(nickname).build());
                             progress.onSuccess();
                         } else {

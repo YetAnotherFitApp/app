@@ -25,6 +25,7 @@ import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.user_account.AboutFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseListFragment;
+import com.example.yetanotherfitapp.user_account.ProfileFragment;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
@@ -32,10 +33,6 @@ import java.io.FilenameFilter;
 
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ExerciseListFragment.OnExListStateChangedListener {
-
-    private String mUserName;
-    private String mUserMail;
-    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,15 +50,15 @@ public class NavDrawer extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         FirebaseUser user = YafaApplication.from(this).getAuth().getCurrentUser();
-        mUserMail = user.getEmail();
-        mUserName = user.getDisplayName();
+        String userMail = user.getEmail();
+        String userName = user.getDisplayName();
 
         View headerView = navigationView.getHeaderView(0);
         TextView userNameView = headerView.findViewById(R.id.userName);
         TextView userMailView = headerView.findViewById(R.id.userMail);
 
-        userNameView.setText(mUserMail.substring(0, mUserMail.indexOf('@')));
-        userMailView.setText(mUserMail);
+        userNameView.setText(userName);
+        userMailView.setText(userMail);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().
@@ -73,7 +70,7 @@ public class NavDrawer extends AppCompatActivity
             public void onClick(View v) {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, new com.example.yetanotherfitapp.fragments.ProfileFragment())
+                        .replace(R.id.container, new ProfileFragment())
                         .commit();
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
@@ -137,8 +134,7 @@ public class NavDrawer extends AppCompatActivity
     private void signOut() {
         YafaApplication.from(this).getAuth().signOut();
         Toast.makeText(this, getResources().getString(R.string.user_sign_out), Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(NavDrawer.this, EntryActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(NavDrawer.this, EntryActivity.class));
         finish();
     }
 

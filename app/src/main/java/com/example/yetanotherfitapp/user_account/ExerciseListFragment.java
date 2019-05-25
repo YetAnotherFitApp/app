@@ -66,7 +66,6 @@ public class ExerciseListFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_exercise_list, container, false);
     }
 
-    @SuppressLint("StaticFieldLeak")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

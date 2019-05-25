@@ -16,7 +16,6 @@ import android.widget.ProgressBar;
 
 import com.example.yetanotherfitapp.R;
 
-//TODO: Не забудь про никнейм!!!
 public class RegistrationFragment extends Fragment {
 
     private EntryFragment.OnAuthStateChangeListener mOnAuthStateChangeListener;

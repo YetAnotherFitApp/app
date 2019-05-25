@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import java.io.File;
 
 public class ExerciseFragment extends Fragment {
 
-    private final String DBG = "DBG_TAG";
     private final static String KEY_TITLE = "Title";
     private final static String KEY_IMAGE_NAME = "ImageName";
     private final static String KEY_DESCRIPTION = "Description";
@@ -75,7 +73,6 @@ public class ExerciseFragment extends Fragment {
 
     private void getImage(final String name, final ImageView imageView) {
         File imageFile = mOnExListChangedListener.getFileByName(name);
-        Log.d(DBG, "get image");
         Glide.with(this).load(imageFile).into(imageView);
     }
 
