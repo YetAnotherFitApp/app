@@ -1,5 +1,6 @@
 package com.example.yetanotherfitapp.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,21 +21,29 @@ import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
+import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.user_account.AboutFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseListFragment;
-import com.example.yetanotherfitapp.user_account.ProfileFragment;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.io.File;
+import java.io.FilenameFilter;
 
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ExerciseListFragment.OnExListStateChangedListener {
+
+    private String mUserName;
+    private String mUserMail;
+    Toolbar toolbar;
+    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -70,6 +79,7 @@ public class NavDrawer extends AppCompatActivity
                         .commit();
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
+                toolbar.setVisibility(View.GONE);
             }
         });
     }
@@ -120,6 +130,7 @@ public class NavDrawer extends AppCompatActivity
         } else if (id == R.id.signOut) {
             signOut();
         }
+        toolbar.setVisibility(View.VISIBLE);
         fragmentTransaction.commit();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -140,6 +151,27 @@ public class NavDrawer extends AppCompatActivity
                 replace(R.id.container, ExerciseFragment.newInstance(exerciseId)).
                 addToBackStack(null).
                 commit();
+    }
+
+    @Override
+    public Context getAppContext() {
+        return getApplicationContext();
+    }
+
+    @Override
+    public File getFileByName(final String name) {
+        File[] files = getFilesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String n) {
+                return n.equals(name);
+            }
+        });
+        return files.length == 0 ? null : files[0];
+    }
+
+    @Override
+    public void deleteFileByName(String name) {
+        deleteFile(name);
     }
 
     @Override
