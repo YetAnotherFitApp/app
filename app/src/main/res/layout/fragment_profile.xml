@@ -13,12 +13,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
             <LinearLayout
+                android:background="@color/colorPrimary"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="16dp">
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/EyeImg"
@@ -93,8 +94,28 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/favourite"
-                android:textSize="40sp"
-                android:textAlignment="center"/>
+                android:textAlignment="center"
+                android:textSize="40sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/kak_uhazhivat_za_glazami_4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nsjdhbfkj"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    android:layout_gravity="center|end"/>
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>

@@ -35,6 +35,7 @@ public class NavDrawer extends AppCompatActivity
 
     private String mUserName;
     private String mUserMail;
+    Toolbar toolbar;
     private FragmentManager mFragmentManager;
 
     @Override
@@ -42,7 +43,7 @@ public class NavDrawer extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -73,10 +74,11 @@ public class NavDrawer extends AppCompatActivity
             public void onClick(View v) {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, new com.example.yetanotherfitapp.fragments.ProfileFragment())
+                        .replace(R.id.container, new com.example.yetanotherfitapp.user_account.ProfileFragment())
                         .commit();
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
+                toolbar.setVisibility(View.GONE);
             }
         });
     }
@@ -127,6 +129,7 @@ public class NavDrawer extends AppCompatActivity
         } else if (id == R.id.signOut) {
             signOut();
         }
+        toolbar.setVisibility(View.VISIBLE);
         fragmentTransaction.commit();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
