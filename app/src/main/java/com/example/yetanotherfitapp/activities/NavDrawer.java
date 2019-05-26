@@ -1,6 +1,5 @@
 package com.example.yetanotherfitapp.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,15 +20,11 @@ import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
-import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.user_account.AboutFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseListFragment;
 import com.example.yetanotherfitapp.user_account.ProfileFragment;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.io.File;
-import java.io.FilenameFilter;
 
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ExerciseListFragment.OnExListStateChangedListener {
@@ -71,6 +66,7 @@ public class NavDrawer extends AppCompatActivity
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, new ProfileFragment())
+                        .addToBackStack(null)
                         .commit();
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
@@ -139,33 +135,11 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public void goToExercise(Exercise exercise) {
+    public void goToExercise(String exerciseId) {
         getSupportFragmentManager().beginTransaction().
-                replace(R.id.container,
-                        ExerciseFragment.newInstance(exercise.title, exercise.imageName, exercise.description)).
+                replace(R.id.container, ExerciseFragment.newInstance(exerciseId)).
                 addToBackStack(null).
                 commit();
-    }
-
-    @Override
-    public Context getAppContext() {
-        return getApplicationContext();
-    }
-
-    @Override
-    public File getFileByName(final String name) {
-        File[] files = getFilesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String n) {
-                return n.equals(name);
-            }
-        });
-        return files.length == 0 ? null : files[0];
-    }
-
-    @Override
-    public void deleteFileByName(String name) {
-        deleteFile(name);
     }
 
     @Override

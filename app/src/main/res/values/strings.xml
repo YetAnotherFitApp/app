@@ -30,4 +30,5 @@
     <string name="user_sign_out">Выход из аккаунта</string>
     <string name="name">Имя</string>
     <string name="other">Other</string>
+    <string name="exercise_not_load">К сожалению, это упражнение еще не загружено на Ваше устройство :(</string>
 </resources>
