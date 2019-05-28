@@ -15,7 +15,7 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_check_download"
+        android:id="@+id/action_download"
         android:icon="@android:drawable/ic_menu_save"
         android:title="@string/action_save_to_local"
         app:showAsAction="never" />

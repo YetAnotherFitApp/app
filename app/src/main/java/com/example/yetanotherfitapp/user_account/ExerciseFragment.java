@@ -32,6 +32,8 @@ public class ExerciseFragment extends Fragment {
 
     private ExerciseListFragment.OnExListStateChangedListener mOnExListChangedListener;
     private String mId;
+    private Boolean mIsLoaded;
+    private Exercise mExercise;
     private ExercisesViewModel mExercisesViewModel;
 
     public static ExerciseFragment newInstance(String id) {
@@ -52,6 +54,7 @@ public class ExerciseFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mId = getArguments().getString(KEY_EXERCISE_ID);
+        mIsLoaded = null;
         setHasOptionsMenu(true);
     }
 
@@ -81,8 +84,11 @@ public class ExerciseFragment extends Fragment {
                             mOnExListChangedListener.showFail(errorMsg);
                         }
                     });
+                    mIsLoaded = false;
                     exerciseNotLoaded(view);
                 } else {
+                    mIsLoaded = true;
+                    mExercise = exercise;
                     exerciseIsLoaded(view, exercise);
                 }
             }
@@ -107,7 +113,29 @@ public class ExerciseFragment extends Fragment {
     //TODO Добавить обработку нажатий на кнопки меню
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        switch (item.getItemId()) {
+            case R.id.action_favourite:
+                mOnExListChangedListener.showFail("Coming soon...");
+                break;
+            case R.id.action_download:
+                if (mIsLoaded != null) {
+                    if (!mIsLoaded) {
+                        mExercisesViewModel.downloadExercise(mId);
+                    } else {
+                        mOnExListChangedListener.showFail("Упражнение уже есть на Вашем устройстве");
+                    }
+                }
+                break;
+            case R.id.action_delete:
+                if (mIsLoaded != null) {
+                    if (mIsLoaded) {
+                        mExercisesViewModel.deleteExercise(mExercise);
+                    } else {
+                        mOnExListChangedListener.showFail("Упражнение на загружено на Ваше устройство");
+                    }
+                }
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -124,17 +152,6 @@ public class ExerciseFragment extends Fragment {
 
         ScrollView exerciseScroll = view.findViewById(R.id.ex_scroll_view);
         exerciseScroll.setVisibility(View.GONE);
-
-//        final ImageButton downloadBtn = view.findViewById(R.id.ex_download_btn);
-//        downloadBtn.setVisibility(View.VISIBLE);
-//        downloadBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                downloadBtn.setVisibility(View.GONE);
-//                downloadProgress.setVisibility(View.VISIBLE);
-//                mExercisesViewModel.downloadExercise(mId);
-//            }
-//        });
     }
 
     private void exerciseIsLoaded(final View view, final Exercise exercise) {
@@ -155,20 +172,6 @@ public class ExerciseFragment extends Fragment {
         description.setText(exercise.description);
 
         getImage(exercise.imageName, (ImageView) view.findViewById(R.id.ex_image));
-
-//        final ImageButton deleteBtn = view.findViewById(R.id.ex_delete);
-//        deleteBtn.setVisibility(View.VISIBLE);
-//        deleteBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mainLayout.setGravity(Gravity.CENTER);
-//                title.setVisibility(View.GONE);
-//                downloadProgress.setVisibility(View.VISIBLE);
-//                exerciseScroll.setVisibility(View.GONE);
-//                deleteBtn.setVisibility(View.GONE);
-//                mExercisesViewModel.deleteExercise(exercise);
-//            }
-//        });
     }
 
     private void getImage(final String name, final ImageView imageView) {

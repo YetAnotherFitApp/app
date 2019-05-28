@@ -106,6 +106,7 @@ public class ExercisesViewModel extends AndroidViewModel {
 
             @Override
             public void onFailed(String errorMsg) {
+                mErrorMessage.postValue(errorMsg);
             }
         });
     }

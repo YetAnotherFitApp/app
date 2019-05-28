@@ -173,26 +173,22 @@ public class ExercisesRepo {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void insertExercise(final Exercise exercise, final LoadProgress progress) {
-        StorageReference imageRef = mFirebaseStorage.getReference().child(PICTURES_COLLECTION_NAME + "/" + exercise.imageName + ".png");
-        imageRef.getFile(createFile(exercise.imageName))
-                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                        Executors.newSingleThreadExecutor().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                mExerciseDao.insert(exercise);
-                            }
-                        });
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        progress.onFailed(e.getMessage());
-                    }
-                });
+        new AsyncTask<Exercise, Void, Void>() {
+            @Override
+            protected Void doInBackground(Exercise... exercises) {
+                mExerciseDao.insert(exercises[0]);
+                mExerciseTitleDao.insert(new ExerciseTitle(exercise.imageName, exercise.title, true));
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                progress.onLoadEnd(exercise);
+            }
+        }.execute(exercise);
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -203,6 +199,7 @@ public class ExercisesRepo {
             @Override
             protected Void doInBackground(Exercise... exercises) {
                 mExerciseDao.delete(exercises[0]);
+                mExerciseTitleDao.insert(new ExerciseTitle(exercise.imageName, exercise.title, false));
                 return null;
             }
 
@@ -211,7 +208,7 @@ public class ExercisesRepo {
                 super.onPostExecute(aVoid);
                 progress.onLoadEnd(exercise);
             }
-        };
+        }.execute(exercise);
     }
 
     void incrementNumOfDone(final String exerciseId, final LoadProgress progress) {
