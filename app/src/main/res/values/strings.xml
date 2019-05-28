@@ -19,7 +19,7 @@
     <string name="exerciseList">Список Упражнений</string>
     <string name="exercise">Упражнение</string>
     <string name="menu_gallery">Gallery</string>
-    <string name="about">About</string>
+    <string name="about">Статистика</string>
 
     <string name="hello_blank_fragment">Заготовка страницы About</string>
     <string name="achievement"><u>Достижения</u></string>

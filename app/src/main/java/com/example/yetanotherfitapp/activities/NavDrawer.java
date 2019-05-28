@@ -123,7 +123,7 @@ public class NavDrawer extends AppCompatActivity
         } else if (id == R.id.exercise) {
             //Пока из этого места некуда перейти
         } else if (id == R.id.about) {
-            getSupportActionBar().setTitle("About");
+            getSupportActionBar().setTitle("Статистика");
             fragmentTransaction.replace(R.id.container, new AboutFragment()).addToBackStack(null);
         } else if (id == R.id.signOut) {
             signOut();
