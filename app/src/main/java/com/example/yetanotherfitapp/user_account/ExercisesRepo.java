@@ -1,7 +1,9 @@
 package com.example.yetanotherfitapp.user_account;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -68,6 +70,40 @@ public class ExercisesRepo {
         return mExerciseDao.getExerciseById(id);
     }
 
+    void getExerciseFromCloud(String id, final LoadProgress progress) {
+        mFirebaseFirestore.collection(EXERCISE_COLLECTION_NAME)
+                .document(id)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            final Exercise exercise = new Exercise(document.getString(TITLE_FIELD_NAME),
+                                    document.getString(ID_FIELD_NAME),
+                                    document.getString(DESCRIPTION_FIELD_NAME));
+
+                            StorageReference imageRef = mFirebaseStorage.getReference().child(PICTURES_COLLECTION_NAME + "/" + exercise.imageName + ".png");
+                            imageRef.getFile(createFile(exercise.imageName))
+                                    .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                            progress.onLoadEnd(exercise);
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            progress.onFailed(e.getMessage());
+                                        }
+                                    });
+                        } else {
+                            progress.onFailed(task.getException().getMessage());
+                        }
+                    }
+                });
+    }
+
     File getFileByName(final String name) {
         File[] files = mContext.getFilesDir().listFiles(new FilenameFilter() {
             @Override
@@ -128,9 +164,18 @@ public class ExercisesRepo {
                 });
     }
 
+    private File createFile(String name) {
+        File file = getFileByName(name);
+        if (file != null) {
+            return file;
+        } else {
+            return new File(mContext.getFilesDir(), name);
+        }
+    }
+
     private void insertExercise(final Exercise exercise, final LoadProgress progress) {
         StorageReference imageRef = mFirebaseStorage.getReference().child(PICTURES_COLLECTION_NAME + "/" + exercise.imageName + ".png");
-        imageRef.getFile(new File(mContext.getFilesDir(), exercise.imageName))
+        imageRef.getFile(createFile(exercise.imageName))
                 .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -150,14 +195,23 @@ public class ExercisesRepo {
                 });
     }
 
-    void deleteExercise(final Exercise exercise) {
+    @SuppressLint("StaticFieldLeak")
+    void deleteExercise(final Exercise exercise, final LoadProgress progress) {
         deleteFileByName(exercise.imageName);
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
+
+        new AsyncTask<Exercise, Void, Void>() {
             @Override
-            public void run() {
-                mExerciseDao.delete(exercise);
+            protected Void doInBackground(Exercise... exercises) {
+                mExerciseDao.delete(exercises[0]);
+                return null;
             }
-        });
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                progress.onLoadEnd(exercise);
+            }
+        };
     }
 
     void incrementNumOfDone(final String exerciseId, final LoadProgress progress) {
@@ -198,6 +252,8 @@ public class ExercisesRepo {
     }
 
     public interface LoadProgress {
+        void onLoadEnd(Exercise exercise);
+
         void onFailed(String errorMsg);
     }
 

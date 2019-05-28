@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -71,6 +70,17 @@ public class ExerciseFragment extends Fragment {
             @Override
             public void onChanged(@Nullable Exercise exercise) {
                 if (exercise == null) {
+                    mExercisesViewModel.getExerciseFromCloud(mId, new ExercisesRepo.LoadProgress() {
+                        @Override
+                        public void onLoadEnd(Exercise exercise) {
+                            exerciseIsLoaded(view, exercise);
+                        }
+
+                        @Override
+                        public void onFailed(String errorMsg) {
+                            mOnExListChangedListener.showFail(errorMsg);
+                        }
+                    });
                     exerciseNotLoaded(view);
                 } else {
                     exerciseIsLoaded(view, exercise);
@@ -107,27 +117,24 @@ public class ExerciseFragment extends Fragment {
         mainLayout.setGravity(Gravity.CENTER);
 
         TextView title = view.findViewById(R.id.ex_title);
-        title.setText(R.string.exercise_not_load);
+        title.setVisibility(View.GONE);
 
         final ProgressBar downloadProgress = view.findViewById(R.id.ex_progress);
-        downloadProgress.setVisibility(View.GONE);
+        downloadProgress.setVisibility(View.VISIBLE);
 
         ScrollView exerciseScroll = view.findViewById(R.id.ex_scroll_view);
         exerciseScroll.setVisibility(View.GONE);
 
-        ImageButton deleteBtn = view.findViewById(R.id.ex_delete);
-        deleteBtn.setVisibility(View.GONE);
-
-        final ImageButton downloadBtn = view.findViewById(R.id.ex_download_btn);
-        downloadBtn.setVisibility(View.VISIBLE);
-        downloadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                downloadBtn.setVisibility(View.GONE);
-                downloadProgress.setVisibility(View.VISIBLE);
-                mExercisesViewModel.downloadExercise(mId);
-            }
-        });
+//        final ImageButton downloadBtn = view.findViewById(R.id.ex_download_btn);
+//        downloadBtn.setVisibility(View.VISIBLE);
+//        downloadBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                downloadBtn.setVisibility(View.GONE);
+//                downloadProgress.setVisibility(View.VISIBLE);
+//                mExercisesViewModel.downloadExercise(mId);
+//            }
+//        });
     }
 
     private void exerciseIsLoaded(final View view, final Exercise exercise) {
@@ -135,10 +142,8 @@ public class ExerciseFragment extends Fragment {
         mainLayout.setGravity(Gravity.CENTER | Gravity.TOP);
 
         final TextView title = view.findViewById(R.id.ex_title);
+        title.setVisibility(View.VISIBLE);
         title.setText(exercise.title);
-
-        ImageButton downloadBtn = view.findViewById(R.id.ex_download_btn);
-        downloadBtn.setVisibility(View.GONE);
 
         final ProgressBar downloadProgress = view.findViewById(R.id.ex_progress);
         downloadProgress.setVisibility(View.GONE);
@@ -151,19 +156,19 @@ public class ExerciseFragment extends Fragment {
 
         getImage(exercise.imageName, (ImageView) view.findViewById(R.id.ex_image));
 
-        final ImageButton deleteBtn = view.findViewById(R.id.ex_delete);
-        deleteBtn.setVisibility(View.VISIBLE);
-        deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainLayout.setGravity(Gravity.CENTER);
-                title.setVisibility(View.GONE);
-                downloadProgress.setVisibility(View.VISIBLE);
-                exerciseScroll.setVisibility(View.GONE);
-                deleteBtn.setVisibility(View.GONE);
-                mExercisesViewModel.deleteExercise(exercise);
-            }
-        });
+//        final ImageButton deleteBtn = view.findViewById(R.id.ex_delete);
+//        deleteBtn.setVisibility(View.VISIBLE);
+//        deleteBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mainLayout.setGravity(Gravity.CENTER);
+//                title.setVisibility(View.GONE);
+//                downloadProgress.setVisibility(View.VISIBLE);
+//                exerciseScroll.setVisibility(View.GONE);
+//                deleteBtn.setVisibility(View.GONE);
+//                mExercisesViewModel.deleteExercise(exercise);
+//            }
+//        });
     }
 
     private void getImage(final String name, final ImageView imageView) {

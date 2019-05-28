@@ -146,7 +146,6 @@ public class ExerciseListFragment extends Fragment {
     }
 
     public interface OnExListStateChangedListener {
-
         void goToExercise(String exerciseId);
 
         void showFail(String errMsg);

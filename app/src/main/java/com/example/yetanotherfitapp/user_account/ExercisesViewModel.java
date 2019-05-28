@@ -48,6 +48,20 @@ public class ExercisesViewModel extends AndroidViewModel {
         return mExercise;
     }
 
+    void getExerciseFromCloud(String id, final ExercisesRepo.LoadProgress progress) {
+        mExercisesRepo.getExerciseFromCloud(id, new ExercisesRepo.LoadProgress() {
+            @Override
+            public void onLoadEnd(Exercise exercise) {
+                progress.onLoadEnd(exercise);
+            }
+
+            @Override
+            public void onFailed(String errorMsg) {
+                mErrorMessage.postValue(errorMsg);
+            }
+        });
+    }
+
     LiveData<String> getErrorMessage() {
         return mErrorMessage;
     }
@@ -59,6 +73,10 @@ public class ExercisesViewModel extends AndroidViewModel {
     void downloadTitles() {
         mExercisesRepo.downloadTitles(new ExercisesRepo.LoadProgress() {
             @Override
+            public void onLoadEnd(Exercise exercise) {
+            }
+
+            @Override
             public void onFailed(String errorMsg) {
                 mErrorMessage.postValue(errorMsg);
             }
@@ -68,6 +86,11 @@ public class ExercisesViewModel extends AndroidViewModel {
     void downloadExercise(String id) {
         mExercisesRepo.downloadExercise(id, new ExercisesRepo.LoadProgress() {
             @Override
+            public void onLoadEnd(Exercise exercise) {
+                mErrorMessage.postValue("Упражнение успешно загружено на Ваше устройство");
+            }
+
+            @Override
             public void onFailed(String errorMsg) {
                 mErrorMessage.postValue(errorMsg);
             }
@@ -75,11 +98,24 @@ public class ExercisesViewModel extends AndroidViewModel {
     }
 
     void deleteExercise(Exercise exercise) {
-        mExercisesRepo.deleteExercise(exercise);
+        mExercisesRepo.deleteExercise(exercise, new ExercisesRepo.LoadProgress() {
+            @Override
+            public void onLoadEnd(Exercise exercise) {
+                mErrorMessage.postValue("Упражнение успешно удалено с Вашего устройства");
+            }
+
+            @Override
+            public void onFailed(String errorMsg) {
+            }
+        });
     }
 
     void incrementNumOfDone(String exerciseId) {
         mExercisesRepo.incrementNumOfDone(exerciseId, new ExercisesRepo.LoadProgress() {
+            @Override
+            public void onLoadEnd(Exercise exercise) {
+            }
+
             @Override
             public void onFailed(String errorMsg) {
                 mErrorMessage.postValue(errorMsg);
