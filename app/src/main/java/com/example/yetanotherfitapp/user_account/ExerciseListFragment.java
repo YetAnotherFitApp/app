@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,10 @@ import android.widget.TextView;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.database.ExerciseTitle;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,11 +103,41 @@ public class ExerciseListFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final ExerciseViewHolder exerciseViewHolder, int i) {
             final ExerciseTitle currentTitle = mExerciseTitles.get(i);
+
             exerciseViewHolder.listElementTitle.setText(currentTitle.title);
             exerciseViewHolder.listElementTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mOnExListChangedListener.goToExercise(currentTitle.id);
+                    FirebaseFirestore
+                            .getInstance()
+                            .collection("users")
+                            .document(FirebaseAuth.getInstance().getUid())
+                            .collection("exercisesInfo")
+                            .document("NumOfDone")
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    long numOfDone = (long) documentSnapshot.get(currentTitle.id);
+                                    Log.d("smth", String.valueOf(numOfDone));
+                                    FirebaseFirestore
+                                            .getInstance()
+                                            .collection("users")
+                                            .document(FirebaseAuth.getInstance().getUid())
+                                            .collection("exercisesInfo")
+                                            .document("NumOfDone")
+                                            .update(currentTitle.id, ++numOfDone).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("smth", "Done");
+                                        }
+                                    });
+                                    Log.d("smth", String.valueOf(numOfDone));
+
+
+                                }
+                            });
                 }
             });
         }

@@ -25,6 +25,7 @@ import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.user_account.AboutFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseListFragment;
+import com.example.yetanotherfitapp.user_account.ProfileFragment;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
@@ -45,6 +46,7 @@ public class NavDrawer extends AppCompatActivity
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setVisibility(View.VISIBLE);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -66,7 +68,9 @@ public class NavDrawer extends AppCompatActivity
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().
-                    replace(R.id.container, new ExerciseListFragment()).commit();
+                    replace(R.id.container, new ExerciseListFragment()).addToBackStack(null).commit();
+
+            getSupportActionBar().setTitle("Список Упражнений");
         }
 
         headerView.findViewById(R.id.goToProfileBtn).setOnClickListener(new View.OnClickListener() {
@@ -79,9 +83,11 @@ public class NavDrawer extends AppCompatActivity
                         .commit();
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
-                toolbar.setVisibility(View.GONE);
+                //toolbar.setVisibility(View.GONE);
             }
         });
+
+
     }
 
     @Override
@@ -120,12 +126,14 @@ public class NavDrawer extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if (id == R.id.exerciseList) {
+            getSupportActionBar().setTitle("Список Упражнений");
             if (!(currentFragment instanceof ExerciseListFragment)) {
                 fragmentTransaction.replace(R.id.container, new ExerciseListFragment());
             }
         } else if (id == R.id.exercise) {
             //Пока из этого места некуда перейти
         } else if (id == R.id.about) {
+            getSupportActionBar().setTitle("About");
             fragmentTransaction.replace(R.id.container, new AboutFragment()).addToBackStack(null);
         } else if (id == R.id.signOut) {
             signOut();
@@ -152,28 +160,6 @@ public class NavDrawer extends AppCompatActivity
                 addToBackStack(null).
                 commit();
     }
-
-    @Override
-    public Context getAppContext() {
-        return getApplicationContext();
-    }
-
-    @Override
-    public File getFileByName(final String name) {
-        File[] files = getFilesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String n) {
-                return n.equals(name);
-            }
-        });
-        return files.length == 0 ? null : files[0];
-    }
-
-    @Override
-    public void deleteFileByName(String name) {
-        deleteFile(name);
-    }
-
     @Override
     public void showFail(String errMsg) {
         Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();

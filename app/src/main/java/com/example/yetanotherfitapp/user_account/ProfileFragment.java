@@ -1,14 +1,18 @@
 package com.example.yetanotherfitapp.user_account;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
@@ -17,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class ProfileFragment extends Fragment {
 
     private FirebaseUser mUser;
+    AppCompatActivity activity;
 
     @Override
     public void onAttach(Context context) {
@@ -26,7 +31,13 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view =  inflater.inflate(R.layout.activity_profile, container, false);
+        activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().hide();
+//        activity.setSupportActionBar(bar);
+//        ActionBar actionBar = activity.getSupportActionBar();
+//        actionBar.setTitle("TEsting");
+        return view;
     }
 
     @Override
@@ -38,5 +49,12 @@ public class ProfileFragment extends Fragment {
 
         userNameView.setText(mUser.getDisplayName());
         userMail.setText(mUser.getEmail());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        activity.getSupportActionBar().show();
+
     }
 }
