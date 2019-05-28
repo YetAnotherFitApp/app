@@ -13,11 +13,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AuthRepo {
+
+    private final String EXERCISE = "exercise";
+    private final String EXERCISE_COLLECTION_NAME = "exercises";
+    private final String NICKNAME = "nickname";
+    private final String EMAIL = "mail";
+    private final String USERS_COLLECTION_NAME = "users";
+    private final String EX_INFO_COLLECTION_NAME = "exercisesInfo";
+    private final String NUM_OF_DONE = "NumOfDone";
 
     private final FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
@@ -43,24 +53,31 @@ public class AuthRepo {
                 });
     }
 
-    //TODO: убрать хардкод
-    private HashMap<String, Long> buildExerciseHashMap() {
-        HashMap<String, Long> hashMap = new HashMap<>();
-        hashMap.put("exercise1", 0L);
-        hashMap.put("exercise2", 0L);
-        hashMap.put("exercise3", 0L);
-        hashMap.put("exercise4", 0L);
-        hashMap.put("exercise5", 0L);
-        hashMap.put("exercise6", 0L);
-        hashMap.put("exercise7", 0L);
-        hashMap.put("exercise8", 0L);
-        hashMap.put("exercise9", 0L);
-        return hashMap;
+    private void buildExerciseHashMap(final BuildMapProgress buildProgress) {
+        mFirestore.collection(EXERCISE_COLLECTION_NAME)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            HashMap<String, Long> hashMap = new HashMap<>();
+                            long i = 1L;
+                            for (QueryDocumentSnapshot ignored : task.getResult()) {
+                                hashMap.put(EXERCISE + i, 0L);
+                                i++;
+                            }
+                            buildProgress.onSuccess(hashMap);
+                        } else {
+                            buildProgress.onFailed(task.getException().getMessage());
+                        }
+                    }
+                });
     }
 
     void createAccount(String email, String password, final String nickname, final AuthProgress progress) {
-        mObjectMap.put("nickname", nickname);
-        mObjectMap.put("mail", email);
+        mObjectMap.put(NICKNAME, nickname);
+        mObjectMap.put(EMAIL, email);
+
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -68,9 +85,13 @@ public class AuthRepo {
                         if (task.isSuccessful()) {
                             //mAuth.getCurrentUser().sendEmailVerification();
                             //mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest());
-                            mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(nickname).build());
-                            DocumentReference documentReference = mFirestore
-                                    .collection("users")
+                            mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest
+                                    .Builder()
+                                    .setDisplayName(nickname)
+                                    .build());
+
+                            final DocumentReference documentReference = mFirestore
+                                    .collection(USERS_COLLECTION_NAME)
                                     .document(mAuth.getUid());
 
                             documentReference.set(mObjectMap)
@@ -80,12 +101,27 @@ public class AuthRepo {
                                             Log.d("smth", "DocumentSnapshot successfully written!");
                                         }
                                     });
-                            documentReference.collection("exercisesInfo").document("NumOfDone").set(buildExerciseHashMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                            buildExerciseHashMap(new BuildMapProgress() {
                                 @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("smth", "ExerciseCollectionAdd successful");
+                                public void onSuccess(HashMap<String, Long> exerciseHashMap) {
+                                    documentReference.collection(EX_INFO_COLLECTION_NAME)
+                                            .document(NUM_OF_DONE)
+                                            .set(exerciseHashMap)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("smth", "ExerciseCollectionAdd successful");
+                                                }
+                                            });
+                                }
+
+                                @Override
+                                public void onFailed(String errorMsg) {
+                                    progress.onFailed(errorMsg);
                                 }
                             });
+
                             progress.onSuccess();
                         } else {
                             progress.onFailed(task.getException().getMessage());
@@ -96,6 +132,12 @@ public class AuthRepo {
 
     public interface AuthProgress {
         void onSuccess();
+
+        void onFailed(String errorMsg);
+    }
+
+    private interface BuildMapProgress {
+        void onSuccess(HashMap<String, Long> exerciseHashMap);
 
         void onFailed(String errorMsg);
     }
