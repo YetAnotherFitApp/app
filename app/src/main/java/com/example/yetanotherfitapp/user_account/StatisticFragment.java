@@ -13,11 +13,7 @@ import android.view.ViewGroup;
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
 import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -25,11 +21,9 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.EntryXComparator;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.collection.ArraySortedMap;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firestore.v1.Target;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AboutFragment extends Fragment {
+public class StatisticFragment extends Fragment {
 
     ArrayList<PieEntry> entries;
     ArrayList<PieEntry> entriesMod = new ArrayList<>();
@@ -48,9 +42,11 @@ public class AboutFragment extends Fragment {
     FirebaseAuth mAuth;
     PieChart chart;
 
-    public AboutFragment() {
-        mFirestore = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mFirestore = YafaApplication.from(context).getFirestore();
+        mAuth = YafaApplication.from(context).getAuth();
     }
 
     private void getFirestoreList() {
@@ -73,29 +69,28 @@ public class AboutFragment extends Fragment {
                 .document("NumOfDone")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                map = documentSnapshot.getData().entrySet();
-                entries = new ArrayList<>();
-                for (Map.Entry<String, Object> i : map) {
-                    entries.add(new PieEntry((Long) i.getValue(), mapOfEx.get(i.getKey())));
-                }
-                Collections.sort(entries, new EntryXComparator());
-                int i = 0;
-                float temp = 0;
-                for (PieEntry x: entries) {
-                    if (i < 4) {
-                        entriesMod.add(new PieEntry(x.getValue(), x.getLabel()));
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        map = documentSnapshot.getData().entrySet();
+                        entries = new ArrayList<>();
+                        for (Map.Entry<String, Object> i : map) {
+                            entries.add(new PieEntry((Long) i.getValue(), mapOfEx.get(i.getKey())));
+                        }
+                        Collections.sort(entries, new EntryXComparator());
+                        int i = 0;
+                        float temp = 0;
+                        for (PieEntry x : entries) {
+                            if (i < 4) {
+                                entriesMod.add(new PieEntry(x.getValue(), x.getLabel()));
+                            } else {
+                                temp += x.getValue();
+                            }
+                            i++;
+                        }
+                        entriesMod.add(new PieEntry(temp, "Other"));
+                        setChart();
                     }
-                    else {
-                        temp += x.getValue();
-                    }
-                    i++;
-                }
-                entriesMod.add(new PieEntry(temp, "Other"));
-                setChart();
-            }
-        });
+                });
     }
 
     public void setChart() {
@@ -128,10 +123,9 @@ public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
-        chart = (PieChart) view.findViewById(R.id.chart);
+        chart = view.findViewById(R.id.chart);
         getFirestoreList();
         return view;
-
     }
 
 }

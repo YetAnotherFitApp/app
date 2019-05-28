@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.database.Exercise;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 
@@ -55,6 +56,7 @@ public class ExerciseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mId = getArguments().getString(KEY_EXERCISE_ID);
         mIsLoaded = null;
+        mExercise = null;
         setHasOptionsMenu(true);
     }
 
@@ -75,8 +77,8 @@ public class ExerciseFragment extends Fragment {
                 if (exercise == null) {
                     mExercisesViewModel.getExerciseFromCloud(mId, new ExercisesRepo.LoadProgress() {
                         @Override
-                        public void onLoadEnd(Exercise exercise) {
-                            exerciseIsLoaded(view, exercise);
+                        public void onLoadEnd(Exercise exercise, StorageReference imageRef) {
+                            exerciseIsLoaded(view, exercise, imageRef);
                         }
 
                         @Override
@@ -85,15 +87,16 @@ public class ExerciseFragment extends Fragment {
                         }
                     });
                     mIsLoaded = false;
+                    mExercise = null;
                     exerciseNotLoaded(view);
                 } else {
                     mIsLoaded = true;
                     mExercise = exercise;
-                    exerciseIsLoaded(view, exercise);
+                    exerciseIsLoaded(view, exercise, null);
                 }
             }
         });
-        mExercisesViewModel.getErrorMessage().observe(this, new Observer<String>() {
+        mExercisesViewModel.getMessage().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 if (s != null) {
@@ -124,7 +127,7 @@ public class ExerciseFragment extends Fragment {
                         mOnExListChangedListener.showFail("Упражнение уже есть на Вашем устройстве");
                     }
                 }
-                break;
+                return true;
             case R.id.action_delete:
                 if (mIsLoaded != null) {
                     if (mIsLoaded) {
@@ -133,7 +136,7 @@ public class ExerciseFragment extends Fragment {
                         mOnExListChangedListener.showFail("Упражнение на загружено на Ваше устройство");
                     }
                 }
-                break;
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -152,7 +155,7 @@ public class ExerciseFragment extends Fragment {
         exerciseScroll.setVisibility(View.GONE);
     }
 
-    private void exerciseIsLoaded(final View view, final Exercise exercise) {
+    private void exerciseIsLoaded(final View view, final Exercise exercise, StorageReference imageRef) {
         final LinearLayout mainLayout = view.findViewById(R.id.ex_main_layout);
         mainLayout.setGravity(Gravity.CENTER | Gravity.TOP);
 
@@ -169,13 +172,23 @@ public class ExerciseFragment extends Fragment {
         TextView description = view.findViewById(R.id.ex_description);
         description.setText(exercise.description);
 
-        getImage(exercise.imageName, (ImageView) view.findViewById(R.id.ex_image));
+        if (imageRef == null) {
+            getImage(exercise.imageName, (ImageView) view.findViewById(R.id.ex_image));
+        } else {
+            getImage((ImageView) view.findViewById(R.id.ex_image), imageRef);
+        }
     }
 
     private void getImage(final String name, final ImageView imageView) {
         File imageFile = mExercisesViewModel.getFileByName(name);
         if (getActivity() != null) {
             Glide.with(this).load(imageFile).into(imageView);
+        }
+    }
+
+    private void getImage(ImageView imageView, StorageReference imageRef) {
+        if (getActivity() != null) {
+            GlideApp.with(this).load(imageRef).into(imageView);
         }
     }
 

@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
-import com.example.yetanotherfitapp.user_account.AboutFragment;
+import com.example.yetanotherfitapp.user_account.StatisticFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseListFragment;
 import com.example.yetanotherfitapp.user_account.ProfileFragment;
@@ -124,9 +124,10 @@ public class NavDrawer extends AppCompatActivity
             }
         } else if (id == R.id.exercise) {
             //Пока из этого места некуда перейти
-        } else if (id == R.id.about) {
+        } else if (id == R.id.statistic) {
             getSupportActionBar().setTitle("Статистика");
-            fragmentTransaction.replace(R.id.container, new AboutFragment()).addToBackStack(null);
+            fragmentTransaction.replace(R.id.container, new StatisticFragment())
+                    .addToBackStack(null);
         } else if (id == R.id.signOut) {
             signOut();
         }

@@ -13,7 +13,7 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/exercise" />
         <item
-            android:id="@+id/about"
+            android:id="@+id/statistic"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/about" />
 

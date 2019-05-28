@@ -57,7 +57,7 @@ public class ExerciseListFragment extends Fragment {
                 }
             }
         });
-        mExercisesViewModel.getErrorMessage().observe(this, new Observer<String>() {
+        mExercisesViewModel.getMessage().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 if (s != null) {

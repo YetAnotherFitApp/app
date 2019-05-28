@@ -84,19 +84,7 @@ public class ExercisesRepo {
                                     document.getString(DESCRIPTION_FIELD_NAME));
 
                             StorageReference imageRef = mFirebaseStorage.getReference().child(PICTURES_COLLECTION_NAME + "/" + exercise.imageName + ".png");
-                            imageRef.getFile(createFile(exercise.imageName))
-                                    .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                            progress.onLoadEnd(exercise);
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            progress.onFailed(e.getMessage());
-                                        }
-                                    });
+                            progress.onLoadEnd(exercise, imageRef);
                         } else {
                             progress.onFailed(task.getException().getMessage());
                         }
@@ -164,31 +152,35 @@ public class ExercisesRepo {
                 });
     }
 
-    private File createFile(String name) {
-        File file = getFileByName(name);
-        if (file != null) {
-            return file;
-        } else {
-            return new File(mContext.getFilesDir(), name);
-        }
-    }
-
     @SuppressLint("StaticFieldLeak")
     private void insertExercise(final Exercise exercise, final LoadProgress progress) {
-        new AsyncTask<Exercise, Void, Void>() {
-            @Override
-            protected Void doInBackground(Exercise... exercises) {
-                mExerciseDao.insert(exercises[0]);
-                mExerciseTitleDao.insert(new ExerciseTitle(exercise.imageName, exercise.title, true));
-                return null;
-            }
+        StorageReference imageRef = mFirebaseStorage.getReference().child(PICTURES_COLLECTION_NAME + "/" + exercise.imageName + ".png");
+        imageRef.getFile(new File(mContext.getFilesDir(), exercise.imageName))
+                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                        new AsyncTask<Exercise, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Exercise... exercises) {
+                                mExerciseDao.insert(exercises[0]);
+                                mExerciseTitleDao.update(new ExerciseTitle(exercise.imageName, exercise.title, true));
+                                return null;
+                            }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                progress.onLoadEnd(exercise);
-            }
-        }.execute(exercise);
+                            @Override
+                            protected void onPostExecute(Void aVoid) {
+                                super.onPostExecute(aVoid);
+                                progress.onLoadEnd(exercise, null);
+                            }
+                        }.execute(exercise);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progress.onFailed(e.getMessage());
+                    }
+                });
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -199,14 +191,14 @@ public class ExercisesRepo {
             @Override
             protected Void doInBackground(Exercise... exercises) {
                 mExerciseDao.delete(exercises[0]);
-                mExerciseTitleDao.insert(new ExerciseTitle(exercise.imageName, exercise.title, false));
+                mExerciseTitleDao.update(new ExerciseTitle(exercise.imageName, exercise.title, false));
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                progress.onLoadEnd(exercise);
+                progress.onLoadEnd(exercise, null);
             }
         }.execute(exercise);
     }
@@ -249,7 +241,7 @@ public class ExercisesRepo {
     }
 
     public interface LoadProgress {
-        void onLoadEnd(Exercise exercise);
+        void onLoadEnd(Exercise exercise, StorageReference imageRef);
 
         void onFailed(String errorMsg);
     }
