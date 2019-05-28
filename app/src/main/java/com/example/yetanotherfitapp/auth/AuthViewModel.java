@@ -14,6 +14,7 @@ public class AuthViewModel extends AndroidViewModel {
         NONE,
         ERROR_EMAIL,
         ERROR_PASSWORD,
+        ERROR_NICKNAME,
         PROGRESS,
         SUCCESS,
         FAILED
@@ -46,9 +47,9 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     void signIn(String email, String password) {
-        if (!isValidEmail(email)) {
+        if (isNotValidEmail(email)) {
             mSignInState.postValue(AuthState.ERROR_EMAIL);
-        } else if (!isValidPassword(password)) {
+        } else if (isNotValidPassword(password)) {
             mSignInState.postValue(AuthState.ERROR_PASSWORD);
         } else {
             requestSignIn(email, password);
@@ -72,9 +73,11 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     void createAccount(String email, String password, String nickname) {
-        if (!isValidEmail(email)) {
+        if (isNotValidNickname(nickname)) {
+            mRegState.postValue(AuthState.ERROR_NICKNAME);
+        } else if (isNotValidEmail(email)) {
             mRegState.postValue(AuthState.ERROR_EMAIL);
-        } else if (!isValidPassword(password)) {
+        } else if (isNotValidPassword(password)) {
             mRegState.postValue(AuthState.ERROR_PASSWORD);
         } else {
             requestCreateAccount(email, password, nickname);
@@ -97,12 +100,16 @@ public class AuthViewModel extends AndroidViewModel {
         });
     }
 
-    private boolean isValidEmail(String email) {
-        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    private boolean isNotValidEmail(String email) {
+        return TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private boolean isValidPassword(String password) {
-        return !TextUtils.isEmpty(password);
+    private boolean isNotValidPassword(String password) {
+        return TextUtils.isEmpty(password);
+    }
+
+    private boolean isNotValidNickname(String nickname) {
+        return TextUtils.isEmpty(nickname);
     }
 
 }

@@ -55,25 +55,36 @@ public class RegistrationFragment extends Fragment {
             @Override
             public void onChanged(@Nullable AuthViewModel.AuthState authState) {
                 switch (authState) {
+                    case ERROR_NICKNAME:
+                        nickname.setError(getResources().getString(R.string.error_msg));
+                        email.setError(null);
+                        password.setError(null);
+                        progressBar.setVisibility(View.GONE);
+                        regBtn.setEnabled(true);
+                        break;
                     case ERROR_EMAIL:
+                        nickname.setError(null);
                         email.setError(getResources().getString(R.string.error_msg));
                         password.setError(null);
                         progressBar.setVisibility(View.GONE);
                         regBtn.setEnabled(true);
                         break;
                     case ERROR_PASSWORD:
+                        nickname.setError(null);
                         email.setError(null);
                         password.setError(getResources().getString(R.string.error_msg));
                         progressBar.setVisibility(View.GONE);
                         regBtn.setEnabled(true);
                         break;
                     case PROGRESS:
+                        nickname.setError(null);
                         email.setError(null);
                         password.setError(null);
                         progressBar.setVisibility(View.VISIBLE);
                         regBtn.setEnabled(false);
                         break;
                     case SUCCESS:
+                        nickname.setError(null);
                         email.setError(null);
                         password.setError(null);
                         progressBar.setVisibility(View.GONE);
@@ -81,6 +92,7 @@ public class RegistrationFragment extends Fragment {
                         mOnAuthStateChangeListener.success(getResources().getString(R.string.account_create_success));
                         break;
                     case FAILED:
+                        nickname.setError(null);
                         email.setError(null);
                         password.setError(null);
                         progressBar.setVisibility(View.GONE);
@@ -89,6 +101,7 @@ public class RegistrationFragment extends Fragment {
                         mOnAuthStateChangeListener.fail(errMsg);
                         break;
                     case NONE:
+                        nickname.setError(null);
                         email.setError(null);
                         password.setError(null);
                         progressBar.setVisibility(View.GONE);
