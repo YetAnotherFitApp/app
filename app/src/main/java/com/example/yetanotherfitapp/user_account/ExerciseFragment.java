@@ -110,7 +110,6 @@ public class ExerciseFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    //TODO Добавить обработку нажатий на кнопки меню
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -139,7 +138,6 @@ public class ExerciseFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    //TODO: обработать кейс с повторной записью в бд
     private void exerciseNotLoaded(final View view) {
         LinearLayout mainLayout = view.findViewById(R.id.ex_main_layout);
         mainLayout.setGravity(Gravity.CENTER);
@@ -176,7 +174,9 @@ public class ExerciseFragment extends Fragment {
 
     private void getImage(final String name, final ImageView imageView) {
         File imageFile = mExercisesViewModel.getFileByName(name);
-        Glide.with(this).load(imageFile).into(imageView);
+        if (getActivity() != null) {
+            Glide.with(this).load(imageFile).into(imageView);
+        }
     }
 
     @Override
