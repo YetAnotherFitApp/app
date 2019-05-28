@@ -60,6 +60,10 @@ public class ExercisesRepo {
         return mExerciseTitleDao.getAllTitles();
     }
 
+    LiveData<List<ExerciseTitle>> getLocalTitles() {
+        return mExerciseTitleDao.getLocalTitles();
+    }
+
     LiveData<Exercise> getExerciseById(String id) {
         return mExerciseDao.getExerciseById(id);
     }
@@ -99,7 +103,7 @@ public class ExercisesRepo {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                mExerciseTitleDao.insert(new ExerciseTitle(id, title));
+                mExerciseTitleDao.insert(new ExerciseTitle(id, title, false));
             }
         });
     }

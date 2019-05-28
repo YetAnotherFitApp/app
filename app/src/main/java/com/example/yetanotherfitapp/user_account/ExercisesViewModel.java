@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
+import com.example.yetanotherfitapp.YafaApplication;
 import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.database.ExerciseTitle;
 
@@ -16,6 +17,7 @@ public class ExercisesViewModel extends AndroidViewModel {
 
     private ExercisesRepo mExercisesRepo;
     private LiveData<List<ExerciseTitle>> mListTitles;
+    private LiveData<List<ExerciseTitle>> mLocalTitles;
     private LiveData<Exercise> mExercise;
     private MutableLiveData<String> mErrorMessage;
 
@@ -23,13 +25,22 @@ public class ExercisesViewModel extends AndroidViewModel {
         super(application);
         mExercisesRepo = new ExercisesRepo(getApplication());
         mListTitles = mExercisesRepo.getExercisesTitles();
+        mLocalTitles = mExercisesRepo.getLocalTitles();
         mExercise = null;
         mErrorMessage = new MutableLiveData<>();
         mErrorMessage.setValue(null);
     }
 
+    LiveData<YafaApplication.NetworkState> getNetworkState() {
+        return YafaApplication.from(getApplication()).getNetworkState();
+    }
+
     LiveData<List<ExerciseTitle>> getListTitles() {
         return mListTitles;
+    }
+
+    LiveData<List<ExerciseTitle>> getLocalTitles() {
+        return mLocalTitles;
     }
 
     LiveData<Exercise> getExerciseById(String id) {

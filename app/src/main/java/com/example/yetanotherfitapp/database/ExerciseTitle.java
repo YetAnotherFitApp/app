@@ -10,9 +10,11 @@ public class ExerciseTitle {
     @NonNull
     public String id;
     public String title;
+    public Boolean isLoaded;
 
-    public ExerciseTitle(@NonNull String id, String title) {
+    public ExerciseTitle(@NonNull String id, String title, Boolean isLoaded) {
         this.id = id;
         this.title = title;
+        this.isLoaded = isLoaded;
     }
 }

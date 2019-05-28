@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.yetanotherfitapp.R;
+import com.example.yetanotherfitapp.YafaApplication;
 import com.example.yetanotherfitapp.database.ExerciseTitle;
 
 import java.util.ArrayList;
@@ -46,6 +47,27 @@ public class ExerciseListFragment extends Fragment {
         recyclerView.setAdapter(exerciseAdapter);
 
         mExercisesViewModel = ViewModelProviders.of(this).get(ExercisesViewModel.class);
+        mExercisesViewModel.getNetworkState().observe(this, new Observer<YafaApplication.NetworkState>() {
+            @Override
+            public void onChanged(@Nullable YafaApplication.NetworkState networkState) {
+                if (networkState == YafaApplication.NetworkState.AVAILABLE) {
+                    observeGlobalData(exerciseAdapter);
+                } else {
+                    observeLocalData(exerciseAdapter);
+                }
+            }
+        });
+        mExercisesViewModel.getErrorMessage().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                if (s != null) {
+                    mOnExListChangedListener.showFail(s);
+                }
+            }
+        });
+    }
+
+    private void observeGlobalData(final ExerciseAdapter exerciseAdapter) {
         mExercisesViewModel.getListTitles().observe(this, new Observer<List<ExerciseTitle>>() {
             @Override
             public void onChanged(@Nullable List<ExerciseTitle> exerciseTitles) {
@@ -58,11 +80,14 @@ public class ExerciseListFragment extends Fragment {
                 }
             }
         });
-        mExercisesViewModel.getErrorMessage().observe(this, new Observer<String>() {
+    }
+
+    private void observeLocalData(final ExerciseAdapter exerciseAdapter) {
+        mExercisesViewModel.getLocalTitles().observe(this, new Observer<List<ExerciseTitle>>() {
             @Override
-            public void onChanged(@Nullable String s) {
-                if (s != null) {
-                    mOnExListChangedListener.showFail(s);
+            public void onChanged(@Nullable List<ExerciseTitle> exerciseTitles) {
+                if (exerciseTitles != null) {
+                    exerciseAdapter.setTitles(exerciseTitles);
                 }
             }
         });

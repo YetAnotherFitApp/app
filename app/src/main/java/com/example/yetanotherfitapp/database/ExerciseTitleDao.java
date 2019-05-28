@@ -16,4 +16,7 @@ public interface ExerciseTitleDao {
     @Query("SELECT * FROM exercisetitle order by id asc")
     LiveData<List<ExerciseTitle>> getAllTitles();
 
+    @Query("SELECT * FROM exercisetitle WHERE isLoaded = 1")
+    LiveData<List<ExerciseTitle>> getLocalTitles();
+
 }

@@ -97,6 +97,7 @@ public class ExerciseFragment extends Fragment {
     //TODO Добавить обработку нажатий на кнопки меню
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         return super.onOptionsItemSelected(item);
     }
 
