@@ -15,13 +15,6 @@ import com.example.yetanotherfitapp.auth.EntryFragment;
 import com.example.yetanotherfitapp.auth.RegistrationFragment;
 import com.example.yetanotherfitapp.auth.SignInFragment;
 
-//TODO: Add design
-//TODO: Add mail check
-//TODO: Add multithreading
-//TODO: Обработка смены конфигурации!
-//TODO: Добавить корректную обработку ошибок!
-//TODO: Clean Architecture
-
 public class EntryActivity extends AppCompatActivity implements EntryFragment.OnAuthStateChangeListener {
 
     private enum AuthState {

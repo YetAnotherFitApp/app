@@ -6,11 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.yetanotherfitapp.R;
@@ -64,14 +59,12 @@ public class ExerciseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_exercise, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_exercise, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         mExercisesViewModel = ViewModelProviders.of(this).get(ExercisesViewModel.class);
         mExercisesViewModel.getExerciseById(mId).observe(this, new Observer<Exercise>() {
@@ -92,6 +85,19 @@ public class ExerciseFragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.exercise_fragment_app_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    //TODO Добавить обработку нажатий на кнопки меню
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     //TODO: обработать кейс с повторной записью в бд
@@ -121,18 +127,6 @@ public class ExerciseFragment extends Fragment {
                 mExercisesViewModel.downloadExercise(mId);
             }
         });
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        inflater.inflate(R.menu.exercise_fragment_app_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-    //TODO Добавить обработку нажатий на кнопки меню
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
     }
 
     private void exerciseIsLoaded(final View view, final Exercise exercise) {
@@ -186,4 +180,5 @@ public class ExerciseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
     }
+
 }

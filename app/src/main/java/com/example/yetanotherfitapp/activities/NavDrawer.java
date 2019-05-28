@@ -1,6 +1,5 @@
 package com.example.yetanotherfitapp.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,36 +20,29 @@ import android.widget.Toast;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
-import com.example.yetanotherfitapp.database.Exercise;
 import com.example.yetanotherfitapp.user_account.AboutFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseListFragment;
 import com.example.yetanotherfitapp.user_account.ProfileFragment;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.io.File;
-import java.io.FilenameFilter;
-
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ExerciseListFragment.OnExListStateChangedListener {
 
-    private String mUserName;
-    private String mUserMail;
-    Toolbar toolbar;
-    private FragmentManager mFragmentManager;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setVisibility(View.VISIBLE);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        mToolbar.setVisibility(View.VISIBLE);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
@@ -68,7 +60,7 @@ public class NavDrawer extends AppCompatActivity
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().
-                    replace(R.id.container, new ExerciseListFragment()).addToBackStack(null).commit();
+                    replace(R.id.container, new ExerciseListFragment()).commit();
 
             getSupportActionBar().setTitle("Список Упражнений");
         }
@@ -83,11 +75,9 @@ public class NavDrawer extends AppCompatActivity
                         .commit();
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
-                //toolbar.setVisibility(View.GONE);
+                //mToolbar.setVisibility(View.GONE);
             }
         });
-
-
     }
 
     @Override
@@ -138,7 +128,7 @@ public class NavDrawer extends AppCompatActivity
         } else if (id == R.id.signOut) {
             signOut();
         }
-        toolbar.setVisibility(View.VISIBLE);
+        mToolbar.setVisibility(View.VISIBLE);
         fragmentTransaction.commit();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -160,6 +150,7 @@ public class NavDrawer extends AppCompatActivity
                 addToBackStack(null).
                 commit();
     }
+
     @Override
     public void showFail(String errMsg) {
         Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();

@@ -33,19 +33,19 @@ public class AuthViewModel extends AndroidViewModel {
         mErrorMessage.setValue("");
     }
 
-    public LiveData<AuthState> getSignInState() {
+    LiveData<AuthState> getSignInState() {
         return mSignInState;
     }
 
-    public LiveData<AuthState> getRegState() {
+    LiveData<AuthState> getRegState() {
         return mRegState;
     }
 
-    public LiveData<String> getErrorMessage() {
+    LiveData<String> getErrorMessage() {
         return mErrorMessage;
     }
 
-    public void signIn(String email, String password) {
+    void signIn(String email, String password) {
         if (!isValidEmail(email)) {
             mSignInState.postValue(AuthState.ERROR_EMAIL);
         } else if (!isValidPassword(password)) {
@@ -71,7 +71,7 @@ public class AuthViewModel extends AndroidViewModel {
         });
     }
 
-    public void createAccount(String email, String password, String nickname) {
+    void createAccount(String email, String password, String nickname) {
         if (!isValidEmail(email)) {
             mRegState.postValue(AuthState.ERROR_EMAIL);
         } else if (!isValidPassword(password)) {

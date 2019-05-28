@@ -21,15 +21,15 @@ public class AuthRepo {
 
     private final FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
+    private Map<String, Object> mObjectMap;
 
-    Map<String, Object> objectMap = new HashMap<>();
-
-    public AuthRepo(Context context) {
+    AuthRepo(Context context) {
         mFirestore = YafaApplication.from(context).getFirestore();
         mAuth = YafaApplication.from(context).getAuth();
+        mObjectMap = new HashMap<>();
     }
 
-    public void signIn(String email, String password, final AuthProgress progress) {
+    void signIn(String email, String password, final AuthProgress progress) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -43,7 +43,8 @@ public class AuthRepo {
                 });
     }
 
-    public HashMap<String, Long> buildExecriseHashMap() {
+    //TODO: убрать хардкод
+    private HashMap<String, Long> buildExerciseHashMap() {
         HashMap<String, Long> hashMap = new HashMap<>();
         hashMap.put("exercise1", 0L);
         hashMap.put("exercise2", 0L);
@@ -57,9 +58,9 @@ public class AuthRepo {
         return hashMap;
     }
 
-    public void createAccount(String email, String password, final String nickname, final AuthProgress progress) {
-        objectMap.put("nickname", nickname);
-        objectMap.put("mail", email);
+    void createAccount(String email, String password, final String nickname, final AuthProgress progress) {
+        mObjectMap.put("nickname", nickname);
+        mObjectMap.put("mail", email);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -72,14 +73,14 @@ public class AuthRepo {
                                     .collection("users")
                                     .document(mAuth.getUid());
 
-                            documentReference.set(objectMap)
+                            documentReference.set(mObjectMap)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             Log.d("smth", "DocumentSnapshot successfully written!");
                                         }
                                     });
-                            documentReference.collection("exercisesInfo").document("NumOfDone").set(buildExecriseHashMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            documentReference.collection("exercisesInfo").document("NumOfDone").set(buildExerciseHashMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d("smth", "ExerciseCollectionAdd successful");

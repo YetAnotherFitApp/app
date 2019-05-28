@@ -1,18 +1,15 @@
 package com.example.yetanotherfitapp.user_account;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
@@ -31,7 +28,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.activity_profile, container, false);
+        View view = inflater.inflate(R.layout.activity_profile, container, false);
         activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().hide();
 //        activity.setSupportActionBar(bar);
@@ -55,6 +52,6 @@ public class ProfileFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         activity.getSupportActionBar().show();
-
     }
+
 }

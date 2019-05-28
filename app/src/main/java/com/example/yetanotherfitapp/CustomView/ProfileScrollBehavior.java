@@ -14,8 +14,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 @SuppressWarnings("unused")
 public class ProfileScrollBehavior extends CoordinatorLayout.Behavior<CircleImageView> {
 
-    private final static float MIN_AVATAR_PERCENTAGE_SIZE   = 0.3f;
-    private final static int EXTRA_FINAL_AVATAR_PADDING     = 80;
+    private final static float MIN_AVATAR_PERCENTAGE_SIZE = 0.3f;
+    private final static int EXTRA_FINAL_AVATAR_PADDING = 80;
 
     private final static String TAG = "behavior";
     private Context mContext;
@@ -81,9 +81,9 @@ public class ProfileScrollBehavior extends CoordinatorLayout.Behavior<CircleImag
             float heightFactor = (mChangeBehaviorPoint - expandedPercentageFactor) / mChangeBehaviorPoint;
 
             float distanceXToSubtract = ((mStartXPosition - mFinalXPosition)
-                    * heightFactor) + (child.getHeight()/2);
+                    * heightFactor) + (child.getHeight() / 2);
             float distanceYToSubtract = ((mStartYPosition - mFinalYPosition)
-                    * (1f - expandedPercentageFactor)) + (child.getHeight()/2);
+                    * (1f - expandedPercentageFactor)) + (child.getHeight() / 2);
 
             child.setX(mStartXPosition - distanceXToSubtract);
             child.setY(mStartYPosition - distanceYToSubtract);
@@ -96,9 +96,9 @@ public class ProfileScrollBehavior extends CoordinatorLayout.Behavior<CircleImag
             child.setLayoutParams(lp);
         } else {
             float distanceYToSubtract = ((mStartYPosition - mFinalYPosition)
-                    * (1f - expandedPercentageFactor)) + (mStartHeight/2);
+                    * (1f - expandedPercentageFactor)) + (mStartHeight / 2);
 
-            child.setX(mStartXPosition - child.getWidth()/2);
+            child.setX(mStartXPosition - child.getWidth() / 2);
             child.setY(mStartYPosition - distanceYToSubtract);
 
             CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) child.getLayoutParams();
@@ -114,7 +114,7 @@ public class ProfileScrollBehavior extends CoordinatorLayout.Behavior<CircleImag
             mStartYPosition = (int) (dependency.getY());
 
         if (mFinalYPosition == 0)
-            mFinalYPosition = (dependency.getHeight() /2);
+            mFinalYPosition = (dependency.getHeight() / 2);
 
         if (mStartHeight == 0)
             mStartHeight = child.getHeight();

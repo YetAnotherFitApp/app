@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_search"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
         android:icon="@android:drawable/btn_star"
         android:title="@string/action_favourite"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_help"
+    <item
+        android:id="@+id/action_help"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/action_delete_from_local"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_check_updates"
+    <item
+        android:id="@+id/action_check_updates"
         android:icon="@android:drawable/ic_menu_save"
         android:title="@string/action_save_to_local"
         app:showAsAction="never" />
+
 </menu>

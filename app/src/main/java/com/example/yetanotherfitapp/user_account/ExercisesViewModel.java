@@ -67,4 +67,13 @@ public class ExercisesViewModel extends AndroidViewModel {
         mExercisesRepo.deleteExercise(exercise);
     }
 
+    void incrementNumOfDone(String exerciseId) {
+        mExercisesRepo.incrementNumOfDone(exerciseId, new ExercisesRepo.LoadProgress() {
+            @Override
+            public void onFailed(String errorMsg) {
+                mErrorMessage.postValue(errorMsg);
+            }
+        });
+    }
+
 }
