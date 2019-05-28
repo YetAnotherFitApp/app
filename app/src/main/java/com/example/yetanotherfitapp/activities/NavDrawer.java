@@ -118,7 +118,9 @@ public class NavDrawer extends AppCompatActivity
         if (id == R.id.exerciseList) {
             getSupportActionBar().setTitle("Список Упражнений");
             if (!(currentFragment instanceof ExerciseListFragment)) {
-                fragmentTransaction.replace(R.id.container, new ExerciseListFragment());
+                fragmentTransaction
+                        .replace(R.id.container, new ExerciseListFragment())
+                        .addToBackStack(null);
             }
         } else if (id == R.id.exercise) {
             //Пока из этого места некуда перейти
