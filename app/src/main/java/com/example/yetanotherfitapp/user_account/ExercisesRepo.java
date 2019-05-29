@@ -31,7 +31,7 @@ import java.io.FilenameFilter;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-public class ExercisesRepo {
+class ExercisesRepo {
 
     private final String EXERCISE_COLLECTION_NAME = "exercises";
     private final String PICTURES_COLLECTION_NAME = "exercise_pictures";
@@ -64,6 +64,10 @@ public class ExercisesRepo {
 
     LiveData<List<ExerciseTitle>> getLocalTitles() {
         return mExerciseTitleDao.getLocalTitles();
+    }
+
+    LiveData<List<ExerciseTitle>> getFavouriteTitles() {
+        return mExerciseTitleDao.getFavouriteTitles();
     }
 
     LiveData<Exercise> getExerciseById(String id) {
@@ -127,9 +131,26 @@ public class ExercisesRepo {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                mExerciseTitleDao.insert(new ExerciseTitle(id, title, false));
+                mExerciseTitleDao.insert(new ExerciseTitle(id, title, false, false));
             }
         });
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    void addToFavourite(final Exercise exercise, final LoadProgress progress) {
+        new AsyncTask<ExerciseTitle, Void, Void>() {
+            @Override
+            protected Void doInBackground(ExerciseTitle... exerciseTitles) {
+                mExerciseTitleDao.update(exerciseTitles[0]);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                progress.onLoadEnd(exercise, null);
+            }
+        }.execute(new ExerciseTitle(exercise.imageName, exercise.title, true, true));
     }
 
     void downloadExercise(String id, final LoadProgress progress) {
@@ -163,7 +184,7 @@ public class ExercisesRepo {
                             @Override
                             protected Void doInBackground(Exercise... exercises) {
                                 mExerciseDao.insert(exercises[0]);
-                                mExerciseTitleDao.update(new ExerciseTitle(exercise.imageName, exercise.title, true));
+                                mExerciseTitleDao.update(new ExerciseTitle(exercise.imageName, exercise.title, true, false));
                                 return null;
                             }
 
@@ -191,7 +212,7 @@ public class ExercisesRepo {
             @Override
             protected Void doInBackground(Exercise... exercises) {
                 mExerciseDao.delete(exercises[0]);
-                mExerciseTitleDao.update(new ExerciseTitle(exercise.imageName, exercise.title, false));
+                mExerciseTitleDao.update(new ExerciseTitle(exercise.imageName, exercise.title, false, false));
                 return null;
             }
 

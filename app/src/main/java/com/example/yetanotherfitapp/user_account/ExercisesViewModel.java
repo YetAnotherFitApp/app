@@ -19,6 +19,7 @@ public class ExercisesViewModel extends AndroidViewModel {
     private ExercisesRepo mExercisesRepo;
     private LiveData<List<ExerciseTitle>> mListTitles;
     private LiveData<List<ExerciseTitle>> mLocalTitles;
+    private LiveData<List<ExerciseTitle>> mFavouriteTitles;
     private LiveData<Exercise> mExercise;
     private MutableLiveData<String> mMessage;
 
@@ -27,6 +28,7 @@ public class ExercisesViewModel extends AndroidViewModel {
         mExercisesRepo = new ExercisesRepo(getApplication());
         mListTitles = mExercisesRepo.getExercisesTitles();
         mLocalTitles = mExercisesRepo.getLocalTitles();
+        mFavouriteTitles = mExercisesRepo.getFavouriteTitles();
         mExercise = null;
         mMessage = new MutableLiveData<>();
         mMessage.setValue(null);
@@ -42,6 +44,10 @@ public class ExercisesViewModel extends AndroidViewModel {
 
     LiveData<List<ExerciseTitle>> getLocalTitles() {
         return mLocalTitles;
+    }
+
+    LiveData<List<ExerciseTitle>> getFavouriteTitles() {
+        return mFavouriteTitles;
     }
 
     LiveData<Exercise> getExerciseById(String id) {
@@ -82,6 +88,44 @@ public class ExercisesViewModel extends AndroidViewModel {
                 mMessage.postValue(errorMsg);
             }
         });
+    }
+
+    void addToFavourite(Boolean isLoaded, String id, Exercise exercise) {
+        if (isLoaded) {
+            mExercisesRepo.addToFavourite(exercise, new ExercisesRepo.LoadProgress() {
+                @Override
+                public void onLoadEnd(Exercise exercise, StorageReference imageRef) {
+                    mMessage.postValue("Упражнение добавлено в избранное");
+                }
+
+                @Override
+                public void onFailed(String errorMsg) {
+                    mMessage.postValue(errorMsg);
+                }
+            });
+        } else {
+            mExercisesRepo.downloadExercise(id, new ExercisesRepo.LoadProgress() {
+                @Override
+                public void onLoadEnd(Exercise exercise, StorageReference imageRef) {
+                    mExercisesRepo.addToFavourite(exercise, new ExercisesRepo.LoadProgress() {
+                        @Override
+                        public void onLoadEnd(Exercise exercise, StorageReference imageRef) {
+                            mMessage.postValue("Упражнение добавлено в избранное");
+                        }
+
+                        @Override
+                        public void onFailed(String errorMsg) {
+                            mMessage.postValue(errorMsg);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailed(String errorMsg) {
+                    mMessage.postValue(errorMsg);
+                }
+            });
+        }
     }
 
     void downloadExercise(String id) {

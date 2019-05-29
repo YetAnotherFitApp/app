@@ -11,10 +11,12 @@ public class ExerciseTitle {
     public String id;
     public String title;
     public Boolean isLoaded;
+    public Boolean isFavourite;
 
-    public ExerciseTitle(@NonNull String id, String title, Boolean isLoaded) {
+    public ExerciseTitle(@NonNull String id, String title, Boolean isLoaded, Boolean isFavourite) {
         this.id = id;
         this.title = title;
         this.isLoaded = isLoaded;
+        this.isFavourite = isFavourite;
     }
 }

@@ -23,4 +23,7 @@ public interface ExerciseTitleDao {
     @Query("SELECT * FROM exercisetitle WHERE isLoaded = 1 order by id asc")
     LiveData<List<ExerciseTitle>> getLocalTitles();
 
+    @Query("SELECT * FROM exercisetitle WHERE isFavourite = 1 order by id asc")
+    LiveData<List<ExerciseTitle>> getFavouriteTitles();
+
 }

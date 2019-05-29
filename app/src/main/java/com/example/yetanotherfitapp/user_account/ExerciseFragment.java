@@ -117,8 +117,10 @@ public class ExerciseFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_favourite:
-                mOnExListChangedListener.showFail("Coming soon...");
-                break;
+                if (mIsLoaded != null) {
+                    mExercisesViewModel.addToFavourite(mIsLoaded, mId, mExercise);
+                }
+                return true;
             case R.id.action_download:
                 if (mIsLoaded != null) {
                     if (!mIsLoaded) {

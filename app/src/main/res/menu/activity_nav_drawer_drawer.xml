@@ -9,9 +9,9 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/exerciseList" />
         <item
-            android:id="@+id/exercise"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/exercise" />
+            android:id="@+id/favourite"
+            android:icon="@drawable/baseline_star_24"
+            android:title="@string/favourite_exercises" />
         <item
             android:id="@+id/statistic"
             android:icon="@drawable/ic_menu_slideshow"

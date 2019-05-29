@@ -14,21 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.yetanotherfitapp.R;
-import com.example.yetanotherfitapp.YafaApplication;
 import com.example.yetanotherfitapp.database.ExerciseTitle;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExerciseListFragment extends Fragment {
+public class FavouriteExerciseFragment extends Fragment {
 
-    private OnExListStateChangedListener mOnExListChangedListener;
+    private ExerciseListFragment.OnExListStateChangedListener mOnExListChangedListener;
     private ExercisesViewModel mExercisesViewModel;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mOnExListChangedListener = (OnExListStateChangedListener) context;
+        mOnExListChangedListener = (ExerciseListFragment.OnExListStateChangedListener) context;
     }
 
     @Nullable
@@ -46,13 +45,11 @@ public class ExerciseListFragment extends Fragment {
         recyclerView.setAdapter(exerciseAdapter);
 
         mExercisesViewModel = ViewModelProviders.of(this).get(ExercisesViewModel.class);
-        mExercisesViewModel.getNetworkState().observe(this, new Observer<YafaApplication.NetworkState>() {
+        mExercisesViewModel.getFavouriteTitles().observe(this, new Observer<List<ExerciseTitle>>() {
             @Override
-            public void onChanged(@Nullable YafaApplication.NetworkState networkState) {
-                if (networkState == YafaApplication.NetworkState.AVAILABLE) {
-                    observeGlobalData(exerciseAdapter);
-                } else {
-                    observeLocalData(exerciseAdapter);
+            public void onChanged(@Nullable List<ExerciseTitle> exerciseTitles) {
+                if (exerciseTitles != null) {
+                    exerciseAdapter.setTitles(exerciseTitles);
                 }
             }
         });
@@ -61,32 +58,6 @@ public class ExerciseListFragment extends Fragment {
             public void onChanged(@Nullable String s) {
                 if (s != null) {
                     mOnExListChangedListener.showFail(s);
-                }
-            }
-        });
-    }
-
-    private void observeGlobalData(final ExerciseAdapter exerciseAdapter) {
-        mExercisesViewModel.getListTitles().observe(this, new Observer<List<ExerciseTitle>>() {
-            @Override
-            public void onChanged(@Nullable List<ExerciseTitle> exerciseTitles) {
-                if (exerciseTitles != null) {
-                    if (exerciseTitles.isEmpty()) {
-                        mExercisesViewModel.downloadTitles();
-                    } else {
-                        exerciseAdapter.setTitles(exerciseTitles);
-                    }
-                }
-            }
-        });
-    }
-
-    private void observeLocalData(final ExerciseAdapter exerciseAdapter) {
-        mExercisesViewModel.getLocalTitles().observe(this, new Observer<List<ExerciseTitle>>() {
-            @Override
-            public void onChanged(@Nullable List<ExerciseTitle> exerciseTitles) {
-                if (exerciseTitles != null) {
-                    exerciseAdapter.setTitles(exerciseTitles);
                 }
             }
         });
@@ -110,7 +81,7 @@ public class ExerciseListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final ExerciseViewHolder exerciseViewHolder, int i) {
+        public void onBindViewHolder(@NonNull ExerciseViewHolder exerciseViewHolder, int i) {
             final ExerciseTitle currentTitle = mExerciseTitles.get(i);
             exerciseViewHolder.listElementTitle.setText(currentTitle.title);
             exerciseViewHolder.listElementTitle.setOnClickListener(new View.OnClickListener() {
@@ -132,12 +103,6 @@ public class ExerciseListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mOnExListChangedListener = null;
-    }
-
-    public interface OnExListStateChangedListener {
-        void goToExercise(String exerciseId);
-
-        void showFail(String errMsg);
     }
 
 }
