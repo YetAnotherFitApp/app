@@ -23,9 +23,9 @@
     <string name="about">Статистика</string>
 
     <string name="hello_blank_fragment">Заготовка страницы About</string>
-    <string name="achievement"><u>Достижения</u></string>
-    <string name="statistics"><u>Статистика</u></string>
-    <string name="favourite"><u>Любимое упражнение</u></string>
+    <string name="achievement">Достижения</string>
+    <string name="statistics">Статистика</string>
+    <string name="favourite">Любимое упражнение</string>
     <string name="error_msg">Поле заполнено некорректно</string>
     <string name="account_create_success">Аккаунт успешно создан</string>
     <string name="user_sign_out">Выход из аккаунта</string>
@@ -37,7 +37,8 @@
     <string name="loaded_exercises">Загруженные упражнения</string>
     <string name="howToOpenStat">Пройдите еще несколько упражнений, чтобы открыть статистику</string>
     <string name="action_favourite">Favourite</string>
-    <string name="action_delete_from_local">vvp</string>
-    <string name="action_save_to_local">dam</string>
-    <string name="nsjdhbfkj">rdp</string>
+    <string name="action_delete_from_local">Удалить</string>
+    <string name="action_save_to_local">Загрузить</string>
+    <string name="nsjdhbfkj">Любимое упражнение</string>
+    <string name="beginEx">Начать</string>
 </resources>
