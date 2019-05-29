@@ -70,6 +70,10 @@ class ExercisesRepo {
         return mExerciseTitleDao.getFavouriteTitles();
     }
 
+    LiveData<ExerciseTitle> getFavouriteTitleById(String id) {
+        return mExerciseTitleDao.getFavouriteTitleById(id);
+    }
+
     LiveData<Exercise> getExerciseById(String id) {
         return mExerciseDao.getExerciseById(id);
     }
@@ -151,6 +155,23 @@ class ExercisesRepo {
                 progress.onLoadEnd(exercise, null);
             }
         }.execute(new ExerciseTitle(exercise.imageName, exercise.title, true, true));
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    void deleteFromFavourite(final Exercise exercise, final LoadProgress progress) {
+        new AsyncTask<ExerciseTitle, Void, Void>() {
+            @Override
+            protected Void doInBackground(ExerciseTitle... exerciseTitles) {
+                mExerciseTitleDao.update(exerciseTitles[0]);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                progress.onLoadEnd(exercise, null);
+            }
+        }.execute(new ExerciseTitle(exercise.imageName, exercise.title, true, false));
     }
 
     void downloadExercise(String id, final LoadProgress progress) {

@@ -155,7 +155,7 @@ public class NavDrawer extends AppCompatActivity
 
     private void signOut() {
         YafaApplication.from(this).getAuth().signOut();
-        Toast.makeText(this, getResources().getString(R.string.user_sign_out), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getResources().getString(R.string.user_sign_out), Toast.LENGTH_SHORT).show();
         startActivity(new Intent(NavDrawer.this, EntryActivity.class));
         finish();
     }
@@ -170,7 +170,7 @@ public class NavDrawer extends AppCompatActivity
 
     @Override
     public void showFail(String errMsg) {
-        Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show();
     }
 
 }

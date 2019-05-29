@@ -20,6 +20,7 @@ public class ExercisesViewModel extends AndroidViewModel {
     private LiveData<List<ExerciseTitle>> mListTitles;
     private LiveData<List<ExerciseTitle>> mLocalTitles;
     private LiveData<List<ExerciseTitle>> mFavouriteTitles;
+    private LiveData<ExerciseTitle> mFavouriteTitle;
     private LiveData<Exercise> mExercise;
     private MutableLiveData<String> mMessage;
 
@@ -30,6 +31,7 @@ public class ExercisesViewModel extends AndroidViewModel {
         mLocalTitles = mExercisesRepo.getLocalTitles();
         mFavouriteTitles = mExercisesRepo.getFavouriteTitles();
         mExercise = null;
+        mFavouriteTitle = null;
         mMessage = new MutableLiveData<>();
         mMessage.setValue(null);
     }
@@ -53,6 +55,11 @@ public class ExercisesViewModel extends AndroidViewModel {
     LiveData<Exercise> getExerciseById(String id) {
         mExercise = mExercisesRepo.getExerciseById(id);
         return mExercise;
+    }
+
+    LiveData<ExerciseTitle> getFavouriteTitleById(String id) {
+        mFavouriteTitle = mExercisesRepo.getFavouriteTitleById(id);
+        return mFavouriteTitle;
     }
 
     void getExerciseFromCloud(String id, final ExercisesRepo.LoadProgress progress) {
@@ -130,6 +137,20 @@ public class ExercisesViewModel extends AndroidViewModel {
                 }
             });
         }
+    }
+
+    void deleteFromFavourite(Exercise exercise) {
+        mExercisesRepo.deleteFromFavourite(exercise, new ExercisesRepo.LoadProgress() {
+            @Override
+            public void onLoadEnd(Exercise exercise, StorageReference imageRef) {
+                mMessage.postValue("Упражнение удалено из избранного");
+            }
+
+            @Override
+            public void onFailed(String errorMsg) {
+                mMessage.postValue(errorMsg);
+            }
+        });
     }
 
     void downloadExercise(String id) {

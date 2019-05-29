@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.database.Exercise;
+import com.example.yetanotherfitapp.database.ExerciseTitle;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
@@ -34,6 +35,7 @@ public class ExerciseFragment extends Fragment {
     private ExerciseListFragment.OnExListStateChangedListener mOnExListChangedListener;
     private String mId;
     private Boolean mIsLoaded;
+    private Boolean mIsFavourite;
     private Exercise mExercise;
     private ExercisesViewModel mExercisesViewModel;
 
@@ -69,9 +71,16 @@ public class ExerciseFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mIsLoaded = null;
         mExercise = null;
+        mIsFavourite = null;
 
         mExercisesViewModel = ViewModelProviders.of(this).get(ExercisesViewModel.class);
         mExercisesViewModel.clearMessage();
+        mExercisesViewModel.getFavouriteTitleById(mId).observe(this, new Observer<ExerciseTitle>() {
+            @Override
+            public void onChanged(@Nullable ExerciseTitle exerciseTitle) {
+                mIsFavourite = (exerciseTitle != null);
+            }
+        });
         mExercisesViewModel.getExerciseById(mId).observe(this, new Observer<Exercise>() {
             @Override
             public void onChanged(@Nullable Exercise exercise) {
@@ -118,13 +127,20 @@ public class ExerciseFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_favourite:
-                if (mIsLoaded != null) {
-                    mExercisesViewModel.addToFavourite(mIsLoaded, mId, mExercise);
+                if (mIsLoaded != null && mIsFavourite != null) {
+                    if (mIsFavourite) {
+                        mIsFavourite = null;
+                        mExercisesViewModel.deleteFromFavourite(mExercise);
+                    } else {
+                        mIsFavourite = null;
+                        mExercisesViewModel.addToFavourite(mIsLoaded, mId, mExercise);
+                    }
                 }
                 return true;
             case R.id.action_download:
                 if (mIsLoaded != null) {
                     if (!mIsLoaded) {
+                        mIsLoaded = null;
                         mExercisesViewModel.downloadExercise(mId);
                     } else {
                         mOnExListChangedListener.showFail("Упражнение уже есть на Вашем устройстве");
@@ -134,6 +150,7 @@ public class ExerciseFragment extends Fragment {
             case R.id.action_delete:
                 if (mIsLoaded != null) {
                     if (mIsLoaded) {
+                        mIsLoaded = null;
                         mExercisesViewModel.deleteExercise(mExercise);
                     } else {
                         mOnExListChangedListener.showFail("Упражнение на загружено на Ваше устройство");

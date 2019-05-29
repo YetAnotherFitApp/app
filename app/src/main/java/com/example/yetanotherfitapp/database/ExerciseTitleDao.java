@@ -26,4 +26,7 @@ public interface ExerciseTitleDao {
     @Query("SELECT * FROM exercisetitle WHERE isFavourite = 1 order by id asc")
     LiveData<List<ExerciseTitle>> getFavouriteTitles();
 
+    @Query("SELECT * FROM exercisetitle WHERE isFavourite = 1 AND id = :id")
+    LiveData<ExerciseTitle> getFavouriteTitleById(String id);
+
 }
