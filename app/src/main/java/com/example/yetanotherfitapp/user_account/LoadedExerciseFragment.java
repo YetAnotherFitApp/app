@@ -39,6 +39,8 @@ public class LoadedExerciseFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mOnExListChangedListener.setActionBarTitle("Загруженные упражнения");
+
         RecyclerView recyclerView = view.findViewById(R.id.exercise_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         final ExerciseAdapter exerciseAdapter = new ExerciseAdapter();
@@ -88,7 +90,7 @@ public class LoadedExerciseFragment extends Fragment {
             exerciseViewHolder.listElementTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnExListChangedListener.goToExercise(currentTitle.id);
+                    mOnExListChangedListener.goToExercise(currentTitle.id, currentTitle.title);
                     mExercisesViewModel.incrementNumOfDone(currentTitle.id);
                 }
             });

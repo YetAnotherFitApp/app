@@ -63,8 +63,6 @@ public class NavDrawer extends AppCompatActivity
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().
                     replace(R.id.container, new ExerciseListFragment()).commit();
-
-            getSupportActionBar().setTitle("Список Упражнений");
         }
 
         headerView.findViewById(R.id.goToProfileBtn).setOnClickListener(new View.OnClickListener() {
@@ -118,28 +116,24 @@ public class NavDrawer extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if (id == R.id.exerciseList) {
-            getSupportActionBar().setTitle("Список Упражнений");
             if (!(currentFragment instanceof ExerciseListFragment)) {
                 fragmentTransaction
                         .replace(R.id.container, new ExerciseListFragment())
                         .addToBackStack(null);
             }
         } else if (id == R.id.favourite) {
-            getSupportActionBar().setTitle("Избранное");
             if (!(currentFragment instanceof FavouriteExerciseFragment)) {
                 fragmentTransaction
                         .replace(R.id.container, new FavouriteExerciseFragment())
                         .addToBackStack(null);
             }
         } else if (id == R.id.loaded) {
-            getSupportActionBar().setTitle("Загруженные упражнения");
             if (!(currentFragment instanceof LoadedExerciseFragment)) {
                 fragmentTransaction
                         .replace(R.id.container, new LoadedExerciseFragment())
                         .addToBackStack(null);
             }
         } else if (id == R.id.statistic) {
-            getSupportActionBar().setTitle("Статистика");
             fragmentTransaction.replace(R.id.container, new StatisticFragment())
                     .addToBackStack(null);
         } else if (id == R.id.signOut) {
@@ -161,11 +155,16 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public void goToExercise(String exerciseId) {
+    public void goToExercise(String exerciseId, String title) {
         getSupportFragmentManager().beginTransaction().
-                replace(R.id.container, ExerciseFragment.newInstance(exerciseId)).
+                replace(R.id.container, ExerciseFragment.newInstance(exerciseId, title)).
                 addToBackStack(null).
                 commit();
+    }
+
+    @Override
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 
     @Override

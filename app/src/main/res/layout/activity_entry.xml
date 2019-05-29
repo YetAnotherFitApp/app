@@ -3,11 +3,4 @@
     android:id="@+id/fragment_login_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-     >
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/backinfuture"
-        android:scaleType="centerCrop"/>
-</FrameLayout>
+    android:orientation="vertical" />

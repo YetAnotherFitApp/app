@@ -20,7 +20,6 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.EntryXComparator;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -37,6 +36,7 @@ import java.util.Set;
 
 public class StatisticFragment extends Fragment {
 
+    private ExerciseListFragment.OnExListStateChangedListener mOnExListStateChangedListener;
     ArrayList<PieEntry> entries;
     ArrayList<PieEntry> entriesMod = new ArrayList<>();
     HashMap<String, String> mapOfEx = new HashMap<>();
@@ -50,6 +50,7 @@ public class StatisticFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mOnExListStateChangedListener = (ExerciseListFragment.OnExListStateChangedListener) context;
         mFirestore = YafaApplication.from(context).getFirestore();
         mAuth = YafaApplication.from(context).getAuth();
     }
@@ -140,6 +141,7 @@ public class StatisticFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_stat, container, false);
+        mOnExListStateChangedListener.setActionBarTitle("Статистика");
         chart = view.findViewById(R.id.chart);
         doMoreExText = view.findViewById(R.id.openStat);
         progressBar = view.findViewById(R.id.statLoader);
@@ -149,6 +151,12 @@ public class StatisticFragment extends Fragment {
         chart.setVisibility(View.GONE);
         getFirestoreList();
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mOnExListStateChangedListener = null;
     }
 
 }

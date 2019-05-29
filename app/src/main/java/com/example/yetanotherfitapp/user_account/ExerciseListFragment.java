@@ -40,6 +40,8 @@ public class ExerciseListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mOnExListChangedListener.setActionBarTitle("Список упражнений");
+
         RecyclerView recyclerView = view.findViewById(R.id.exercise_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         final ExerciseAdapter exerciseAdapter = new ExerciseAdapter();
@@ -117,7 +119,7 @@ public class ExerciseListFragment extends Fragment {
             exerciseViewHolder.listElementTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnExListChangedListener.goToExercise(currentTitle.id);
+                    mOnExListChangedListener.goToExercise(currentTitle.id, currentTitle.title);
                     mExercisesViewModel.incrementNumOfDone(currentTitle.id);
                 }
             });
@@ -136,7 +138,9 @@ public class ExerciseListFragment extends Fragment {
     }
 
     public interface OnExListStateChangedListener {
-        void goToExercise(String exerciseId);
+        void goToExercise(String exerciseId, String title);
+
+        void setActionBarTitle(String title);
 
         void showFail(String errMsg);
     }

@@ -31,18 +31,21 @@ import java.io.File;
 public class ExerciseFragment extends Fragment {
 
     private final static String KEY_EXERCISE_ID = "exercise_id";
+    private final static String KEY_TITLE = "title";
 
     private ExerciseListFragment.OnExListStateChangedListener mOnExListChangedListener;
     private String mId;
+    private String mTitle;
     private Boolean mIsLoaded;
     private Boolean mIsFavourite;
     private Exercise mExercise;
     private ExercisesViewModel mExercisesViewModel;
 
-    public static ExerciseFragment newInstance(String id) {
+    public static ExerciseFragment newInstance(String id, String title) {
         ExerciseFragment exerciseFragment = new ExerciseFragment();
         Bundle argument = new Bundle();
         argument.putString(KEY_EXERCISE_ID, id);
+        argument.putString(KEY_TITLE, title);
         exerciseFragment.setArguments(argument);
         return exerciseFragment;
     }
@@ -57,6 +60,7 @@ public class ExerciseFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mId = getArguments().getString(KEY_EXERCISE_ID);
+        mTitle = getArguments().getString(KEY_TITLE);
         setHasOptionsMenu(true);
     }
 
@@ -69,6 +73,7 @@ public class ExerciseFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mOnExListChangedListener.setActionBarTitle(mTitle);
         mIsLoaded = null;
         mExercise = null;
         mIsFavourite = null;
@@ -165,9 +170,6 @@ public class ExerciseFragment extends Fragment {
         LinearLayout mainLayout = view.findViewById(R.id.ex_main_layout);
         mainLayout.setGravity(Gravity.CENTER);
 
-        TextView title = view.findViewById(R.id.ex_title);
-        title.setVisibility(View.GONE);
-
         final ProgressBar downloadProgress = view.findViewById(R.id.ex_progress);
         downloadProgress.setVisibility(View.VISIBLE);
 
@@ -178,10 +180,6 @@ public class ExerciseFragment extends Fragment {
     private void exerciseIsLoaded(final View view, final Exercise exercise, StorageReference imageRef) {
         final LinearLayout mainLayout = view.findViewById(R.id.ex_main_layout);
         mainLayout.setGravity(Gravity.CENTER | Gravity.TOP);
-
-        final TextView title = view.findViewById(R.id.ex_title);
-        title.setVisibility(View.VISIBLE);
-        title.setText(exercise.title);
 
         final ProgressBar downloadProgress = view.findViewById(R.id.ex_progress);
         downloadProgress.setVisibility(View.GONE);
