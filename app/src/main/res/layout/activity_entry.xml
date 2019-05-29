@@ -10,4 +10,5 @@
         android:layout_height="match_parent"
         android:src="@drawable/back_in_future"
         android:scaleType="centerCrop"/>
+
 </FrameLayout>

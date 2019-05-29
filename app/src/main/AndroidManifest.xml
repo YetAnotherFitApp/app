@@ -14,7 +14,8 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning"
+        >
 
         <activity
             android:name=".activities.NavDrawer"
@@ -23,7 +24,8 @@
 
         <activity
             android:name=".activities.EntryActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateUnspecified">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

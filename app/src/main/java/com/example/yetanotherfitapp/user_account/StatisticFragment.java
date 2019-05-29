@@ -66,46 +66,46 @@ public class StatisticFragment extends Fragment {
                         for (DocumentSnapshot doc : arrayList) {
                             mapOfEx.put((String) doc.get("image"), (String) doc.get("title"));
                         }
-                    }
-                });
-        mFirestore
-                .collection("users")
-                .document(mAuth.getUid())
-                .collection("exercisesInfo")
-                .document("NumOfDone")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        map = documentSnapshot.getData().entrySet();
-                        entries = new ArrayList<>();
-                        for (Map.Entry<String, Object> i : map) {
-                            entries.add(new PieEntry((Long) i.getValue(), mapOfEx.get(i.getKey())));
-                        }
+                        mFirestore
+                                .collection("users")
+                                .document(mAuth.getUid())
+                                .collection("exercisesInfo")
+                                .document("NumOfDone")
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        map = documentSnapshot.getData().entrySet();
+                                        entries = new ArrayList<>();
+                                        for (Map.Entry<String, Object> i : map) {
+                                            entries.add(new PieEntry((Long) i.getValue(), mapOfEx.get(i.getKey())));
+                                        }
 
-                        Collections.sort(entries, new Comparator<PieEntry>() {
-                            @Override
-                            public int compare(PieEntry o1, PieEntry o2) {
-                                return Float.compare(o2.getValue(), o1.getValue());
-                            }
-                        });
-                        int i = 0;
-                        float temp = 0;
-                        for (PieEntry x : entries) {
-                            if (i < 4) {
-                                entriesMod.add(new PieEntry(x.getValue(), x.getLabel()));
-                            } else {
-                                temp += x.getValue();
-                            }
-                            i++;
-                        }
-                        if (temp == 0) {
-                            progressBar.setVisibility(View.GONE);
-                            doMoreExText.setVisibility(View.VISIBLE);
-                            return;
-                        }
-                        entriesMod.add(new PieEntry(temp, "Other"));
-                        setChart();
+                                        Collections.sort(entries, new Comparator<PieEntry>() {
+                                            @Override
+                                            public int compare(PieEntry o1, PieEntry o2) {
+                                                return Float.compare(o2.getValue(), o1.getValue());
+                                            }
+                                        });
+                                        int i = 0;
+                                        float temp = 0;
+                                        for (PieEntry x : entries) {
+                                            if (i < 4) {
+                                                entriesMod.add(new PieEntry(x.getValue(), x.getLabel()));
+                                            } else {
+                                                temp += x.getValue();
+                                            }
+                                            i++;
+                                        }
+                                        if (temp == 0) {
+                                            progressBar.setVisibility(View.GONE);
+                                            doMoreExText.setVisibility(View.VISIBLE);
+                                            return;
+                                        }
+                                        entriesMod.add(new PieEntry(temp, "Other"));
+                                        setChart();
+                                    }
+                                });
                     }
                 });
     }
