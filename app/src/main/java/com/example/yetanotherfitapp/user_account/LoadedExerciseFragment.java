@@ -45,6 +45,7 @@ public class LoadedExerciseFragment extends Fragment {
         recyclerView.setAdapter(exerciseAdapter);
 
         mExercisesViewModel = ViewModelProviders.of(this).get(ExercisesViewModel.class);
+        mExercisesViewModel.clearMessage();
         mExercisesViewModel.getLocalTitles().observe(this, new Observer<List<ExerciseTitle>>() {
             @Override
             public void onChanged(@Nullable List<ExerciseTitle> exerciseTitles) {

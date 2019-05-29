@@ -19,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.yetanotherfitapp.R;
@@ -56,10 +55,9 @@ public class ExerciseFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mId = getArguments().getString(KEY_EXERCISE_ID);
-        mIsLoaded = null;
-        mExercise = null;
         setHasOptionsMenu(true);
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,8 +67,11 @@ public class ExerciseFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mIsLoaded = null;
+        mExercise = null;
 
         mExercisesViewModel = ViewModelProviders.of(this).get(ExercisesViewModel.class);
+        mExercisesViewModel.clearMessage();
         mExercisesViewModel.getExerciseById(mId).observe(this, new Observer<Exercise>() {
             @Override
             public void onChanged(@Nullable Exercise exercise) {

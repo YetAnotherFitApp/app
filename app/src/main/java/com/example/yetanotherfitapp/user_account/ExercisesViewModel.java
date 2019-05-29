@@ -69,6 +69,10 @@ public class ExercisesViewModel extends AndroidViewModel {
         });
     }
 
+    void clearMessage() {
+        mMessage.postValue(null);
+    }
+
     LiveData<String> getMessage() {
         return mMessage;
     }

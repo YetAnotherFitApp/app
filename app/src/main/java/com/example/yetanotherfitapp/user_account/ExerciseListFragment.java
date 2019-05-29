@@ -46,6 +46,7 @@ public class ExerciseListFragment extends Fragment {
         recyclerView.setAdapter(exerciseAdapter);
 
         mExercisesViewModel = ViewModelProviders.of(this).get(ExercisesViewModel.class);
+        mExercisesViewModel.clearMessage();
         mExercisesViewModel.getNetworkState().observe(this, new Observer<YafaApplication.NetworkState>() {
             @Override
             public void onChanged(@Nullable YafaApplication.NetworkState networkState) {
