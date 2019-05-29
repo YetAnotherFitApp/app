@@ -77,7 +77,6 @@ public class StatisticFragment extends Fragment {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         map = documentSnapshot.getData().entrySet();
-                        Log.d("smtht", String.valueOf(map));
                         entries = new ArrayList<>();
                         for (Map.Entry<String, Object> i : map) {
                             entries.add(new PieEntry((Long) i.getValue(), mapOfEx.get(i.getKey())));
@@ -89,12 +88,9 @@ public class StatisticFragment extends Fragment {
                                 return Float.compare(o2.getValue(), o1.getValue());
                             }
                         });
-                        //Log.d("smtht", String.valueOf(entries));
                         int i = 0;
                         float temp = 0;
                         for (PieEntry x : entries) {
-                            Log.d("smtht", x.getLabel());
-                            Log.d("smtht", String.valueOf(x.getValue()));
                             if (i < 4) {
                                 entriesMod.add(new PieEntry(x.getValue(), x.getLabel()));
                             } else {
@@ -108,8 +104,6 @@ public class StatisticFragment extends Fragment {
                             return;
                         }
                         entriesMod.add(new PieEntry(temp, "Other"));
-                        Log.d("smtht", String.valueOf(entriesMod));
-
                         setChart();
                     }
                 });
