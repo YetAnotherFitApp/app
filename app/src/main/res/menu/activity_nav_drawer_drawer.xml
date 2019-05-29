@@ -13,6 +13,10 @@
             android:icon="@drawable/baseline_star_24"
             android:title="@string/favourite_exercises" />
         <item
+            android:id="@+id/loaded"
+            android:icon="@drawable/baseline_cloud_download_24"
+            android:title="@string/loaded_exercises" />
+        <item
             android:id="@+id/statistic"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/about" />

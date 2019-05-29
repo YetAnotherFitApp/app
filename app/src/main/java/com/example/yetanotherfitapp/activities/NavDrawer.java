@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
 import com.example.yetanotherfitapp.user_account.FavouriteExerciseFragment;
+import com.example.yetanotherfitapp.user_account.LoadedExerciseFragment;
 import com.example.yetanotherfitapp.user_account.StatisticFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseFragment;
 import com.example.yetanotherfitapp.user_account.ExerciseListFragment;
@@ -128,6 +129,13 @@ public class NavDrawer extends AppCompatActivity
             if (!(currentFragment instanceof FavouriteExerciseFragment)) {
                 fragmentTransaction
                         .replace(R.id.container, new FavouriteExerciseFragment())
+                        .addToBackStack(null);
+            }
+        } else if (id == R.id.loaded) {
+            getSupportActionBar().setTitle("Загруженные упражнения");
+            if (!(currentFragment instanceof LoadedExerciseFragment)) {
+                fragmentTransaction
+                        .replace(R.id.container, new LoadedExerciseFragment())
                         .addToBackStack(null);
             }
         } else if (id == R.id.statistic) {
