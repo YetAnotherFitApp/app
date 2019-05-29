@@ -38,7 +38,7 @@ public class NavDrawer extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
 
-        mToolbar = findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbarNavDrawer);
         setSupportActionBar(mToolbar);
         mToolbar.setVisibility(View.VISIBLE);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
