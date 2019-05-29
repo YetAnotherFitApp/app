@@ -140,6 +140,8 @@ public class ExerciseListFragment extends Fragment {
     public interface OnExListStateChangedListener {
         void goToExercise(String exerciseId, String title);
 
+        void goToStatistic();
+
         void setActionBarTitle(String title);
 
         void showFail(String errMsg);

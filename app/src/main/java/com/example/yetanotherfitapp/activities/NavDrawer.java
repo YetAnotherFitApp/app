@@ -163,6 +163,14 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
+    public void goToStatistic() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new StatisticFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }

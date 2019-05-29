@@ -9,20 +9,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
-import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,21 +27,22 @@ import java.util.Set;
 
 public class ProfileFragment extends Fragment {
 
-    ArrayList<PieEntry> entries;
-    ArrayList<PieEntry> entriesMod = new ArrayList<>();
     HashMap<String, String> mapOfEx = new HashMap<>();
     Set<Map.Entry<String, Object>> map;
 
     private FirebaseUser mUser;
+    private ExerciseListFragment.OnExListStateChangedListener mOnExListStateChangedListener;
     private FirebaseFirestore mStore;
     private String favouriteEx = "";
     private String title = "";
     private TextView textView;
+    private Button mWatchBtn;
     AppCompatActivity activity;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mOnExListStateChangedListener = (ExerciseListFragment.OnExListStateChangedListener) context;
         mUser = YafaApplication.from(context).getAuth().getCurrentUser();
         mStore = YafaApplication.from(context).getFirestore();
     }
@@ -103,6 +101,12 @@ public class ProfileFragment extends Fragment {
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             title = (String) documentSnapshot.get("title");
                                             textView.setText(title);
+                                            mWatchBtn.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    mOnExListStateChangedListener.goToStatistic();
+                                                }
+                                            });
                                         }
                                     });
                         }
@@ -116,6 +120,7 @@ public class ProfileFragment extends Fragment {
 
         TextView userNameView = view.findViewById(R.id.UserName);
         TextView userMail = view.findViewById(R.id.UserMail);
+        mWatchBtn = view.findViewById(R.id.watch);
 
         userNameView.setText(mUser.getDisplayName());
         userMail.setText(mUser.getEmail());
@@ -127,4 +132,9 @@ public class ProfileFragment extends Fragment {
         activity.getSupportActionBar().show();
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mOnExListStateChangedListener = null;
+    }
 }
