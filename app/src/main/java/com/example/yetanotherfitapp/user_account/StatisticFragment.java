@@ -38,8 +38,8 @@ public class StatisticFragment extends Fragment {
 
     private ExerciseListFragment.OnExListStateChangedListener mOnExListStateChangedListener;
     ArrayList<PieEntry> entries;
-    ArrayList<PieEntry> entriesMod = new ArrayList<>();
-    HashMap<String, String> mapOfEx = new HashMap<>();
+    ArrayList<PieEntry> entriesMod;
+    HashMap<String, String> mapOfEx;
     Set<Map.Entry<String, Object>> map;
     FirebaseFirestore mFirestore;
     FirebaseAuth mAuth;
@@ -56,6 +56,9 @@ public class StatisticFragment extends Fragment {
     }
 
     private void getFirestoreList() {
+        entries = new ArrayList<>();
+        entriesMod = new ArrayList<>();
+        mapOfEx = new HashMap<>();
         mFirestore
                 .collection("exercises")
                 .get()
@@ -157,6 +160,7 @@ public class StatisticFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mOnExListStateChangedListener = null;
+        chart.clear();
     }
 
 }
