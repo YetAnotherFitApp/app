@@ -38,4 +38,5 @@
     <string name="action_save_to_local">Save to local</string>
     <string name="favourite_exercises">Избранное</string>
     <string name="loaded_exercises">Загруженные упражнения</string>
+    <string name="howToOpenStat">Пройдите еще несколько упражнений, чтобы открыть статистику</string>
 </resources>

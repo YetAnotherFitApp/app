@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.yetanotherfitapp.R;
 import com.example.yetanotherfitapp.YafaApplication;
@@ -27,6 +29,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,8 @@ public class StatisticFragment extends Fragment {
     FirebaseFirestore mFirestore;
     FirebaseAuth mAuth;
     PieChart chart;
+    ProgressBar progressBar;
+    TextView doMoreExText;
 
     @Override
     public void onAttach(Context context) {
@@ -72,14 +77,24 @@ public class StatisticFragment extends Fragment {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         map = documentSnapshot.getData().entrySet();
+                        Log.d("smtht", String.valueOf(map));
                         entries = new ArrayList<>();
                         for (Map.Entry<String, Object> i : map) {
                             entries.add(new PieEntry((Long) i.getValue(), mapOfEx.get(i.getKey())));
                         }
-                        Collections.sort(entries, new EntryXComparator());
+
+                        Collections.sort(entries, new Comparator<PieEntry>() {
+                            @Override
+                            public int compare(PieEntry o1, PieEntry o2) {
+                                return Float.compare(o2.getValue(), o1.getValue());
+                            }
+                        });
+                        //Log.d("smtht", String.valueOf(entries));
                         int i = 0;
                         float temp = 0;
                         for (PieEntry x : entries) {
+                            Log.d("smtht", x.getLabel());
+                            Log.d("smtht", String.valueOf(x.getValue()));
                             if (i < 4) {
                                 entriesMod.add(new PieEntry(x.getValue(), x.getLabel()));
                             } else {
@@ -87,7 +102,14 @@ public class StatisticFragment extends Fragment {
                             }
                             i++;
                         }
+                        if (temp == 0) {
+                            progressBar.setVisibility(View.GONE);
+                            doMoreExText.setVisibility(View.VISIBLE);
+                            return;
+                        }
                         entriesMod.add(new PieEntry(temp, "Other"));
+                        Log.d("smtht", String.valueOf(entriesMod));
+
                         setChart();
                     }
                 });
@@ -117,13 +139,20 @@ public class StatisticFragment extends Fragment {
 
         chart.setData(pieData);
         chart.invalidate();
+        chart.setVisibility(View.VISIBLE);
     }
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_about, container, false);
+        View view = inflater.inflate(R.layout.fragment_stat, container, false);
         chart = view.findViewById(R.id.chart);
+        doMoreExText = view.findViewById(R.id.openStat);
+        progressBar = view.findViewById(R.id.statLoader);
+
+        //progressBar.setVisibility(View.GONE);
+        doMoreExText.setVisibility(View.GONE);
+        chart.setVisibility(View.GONE);
         getFirestoreList();
         return view;
     }
