@@ -9,10 +9,10 @@
 
     android:backgroundTint="@color/colorPrimaryDark"
     android:layout_gravity="center"
-    android:layout_marginBottom="90dp"
-    android:layout_marginTop="90dp"
-    android:layout_marginLeft="32dp"
-    android:layout_marginRight="32dp">
+    android:layout_marginBottom="16dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginLeft="50dp"
+    android:layout_marginRight="50dp">
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -31,7 +31,6 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="48dp"
             android:layout_marginBottom="16dp"
             app:srcCompat="@drawable/ic_launcher" />
 
@@ -39,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="32dp"
             android:text="@string/yet_another_fitapp"
             android:textSize="30sp" />
 
