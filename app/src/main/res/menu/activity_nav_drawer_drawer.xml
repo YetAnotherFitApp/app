@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/exerciseList"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/list_of_ex"
             android:title="@string/exerciseList" />
         <item
             android:id="@+id/favourite"
@@ -18,7 +18,7 @@
             android:title="@string/loaded_exercises" />
         <item
             android:id="@+id/statistic"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/stats_icon"
             android:title="@string/about" />
 
     </group>
@@ -27,7 +27,7 @@
         <menu>
             <item
                 android:id="@+id/signOut"
-                android:icon="@drawable/common_google_signin_btn_icon_dark"
+                android:icon="@drawable/sign_out_icon"
                 android:title="@string/sign_out" />
         </menu>
     </item>
