@@ -36,7 +36,7 @@ public class ProfileFragment extends Fragment {
     private String favouriteEx = "";
     private String title = "";
     private TextView textView;
-    private Button mWatchBtn;
+    private Button mGoToEx;
     AppCompatActivity activity;
 
     @Override
@@ -101,10 +101,10 @@ public class ProfileFragment extends Fragment {
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             title = (String) documentSnapshot.get("title");
                                             textView.setText(title);
-                                            mWatchBtn.setOnClickListener(new View.OnClickListener() {
+                                            mGoToEx.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    mOnExListStateChangedListener.goToStatistic();
+                                                    mOnExListStateChangedListener.goToExercise(favouriteEx, title);
                                                 }
                                             });
                                         }
@@ -120,7 +120,14 @@ public class ProfileFragment extends Fragment {
 
         TextView userNameView = view.findViewById(R.id.UserName);
         TextView userMail = view.findViewById(R.id.UserMail);
-        mWatchBtn = view.findViewById(R.id.watch);
+        mGoToEx = view.findViewById(R.id.button_go_ex);
+        Button watchStatisticBtn = view.findViewById(R.id.watch);
+        watchStatisticBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnExListStateChangedListener.goToStatistic();
+            }
+        });
 
         userNameView.setText(mUser.getDisplayName());
         userMail.setText(mUser.getEmail());
