@@ -31,9 +31,8 @@
     <string name="name">Имя</string>
     <string name="other">Other</string>
     <string name="exercise_not_load">К сожалению, это упражнение еще не загружено на Ваше устройство :(</string>
-    <string name="nsjdhbfkj"><b>Вращение глазами</b></string>
-    <string name="title_activity_profile">Profile</string>
-    <string name="action_favourite">favourite</string>
-    <string name="action_delete_from_local">Delete from local</string>
-    <string name="action_save_to_local">Save to local</string>
+    <string name="action_favourite">Favourite</string>
+    <string name="action_delete_from_local">vvp</string>
+    <string name="action_save_to_local">dam</string>
+    <string name="nsjdhbfkj">rdp</string>
 </resources>

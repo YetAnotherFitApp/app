@@ -45,12 +45,56 @@ public class ExerciseListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView recyclerView = view.findViewById(R.id.exercise_list);
+
+
+        //RecyclerView recyclerView = view.findViewById(R.id.exercise_list);
+        //recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        final ExerciseAdapter exerciseAdapter = new ExerciseAdapter();
-        recyclerView.setAdapter(exerciseAdapter);
+
+        //final ExerciseAdapter exerciseAdapter = new ExerciseAdapter();
+        //recyclerView.setAdapter(exerciseAdapter);
+
+        final ArrayList<Description> listt = new ArrayList<>();
+
+
+
 
         mExercisesViewModel = ViewModelProviders.of(this).get(ExercisesViewModel.class);
+        mExercisesViewModel.getListTitles().observe(this, new Observer<List<ExerciseTitle>>() {
+            @Override
+            public void onChanged(@Nullable List<ExerciseTitle> exerciseTitles) {
+                if (exerciseTitles != null) {
+                    if (exerciseTitles.isEmpty()) {
+                        mExercisesViewModel.downloadTitles();
+                    } else {
+                        ArrayList<Title> temp = new ArrayList<>();
+                        temp.add(new Title(""));
+                        Description google = new Description("Google", temp);
+                        listt.add(google);
+
+                    }
+                }
+            }
+        });
+
+        System.out.println(listt.size());
+
+
+        mExercisesViewModel.getErrorMessage().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                if (s != null) {
+                    mOnExListChangedListener.showFail(s);
+                }
+            }
+        });
+
+        SpecialAdapter adapter = new SpecialAdapter(listt);
+        recyclerView.setAdapter(adapter);
+
+       /* mExercisesViewModel = ViewModelProviders.of(this).get(ExercisesViewModel.class);
         mExercisesViewModel.getListTitles().observe(this, new Observer<List<ExerciseTitle>>() {
             @Override
             public void onChanged(@Nullable List<ExerciseTitle> exerciseTitles) {
@@ -70,7 +114,7 @@ public class ExerciseListFragment extends Fragment {
                     mOnExListChangedListener.showFail(s);
                 }
             }
-        });
+        });*/
     }
 
     private class ExerciseViewHolder extends RecyclerView.ViewHolder {
