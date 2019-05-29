@@ -32,6 +32,7 @@ public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ExerciseListFragment.OnExListStateChangedListener {
 
     private Toolbar mToolbar;
+    View headerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,23 +49,13 @@ public class NavDrawer extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        headerView = navigationView.getHeaderView(0);
 
-        FirebaseUser user = YafaApplication.from(this).getAuth().getCurrentUser();
-        String userMail = user.getEmail();
-        String userName = user.getDisplayName();
-
-        View headerView = navigationView.getHeaderView(0);
-        TextView userNameView = headerView.findViewById(R.id.userName);
-        TextView userMailView = headerView.findViewById(R.id.userMail);
-
-        userNameView.setText(userName);
-        userMailView.setText(userMail);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().
                     replace(R.id.container, new ExerciseListFragment()).commit();
         }
-
         headerView.findViewById(R.id.goToProfileBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +69,24 @@ public class NavDrawer extends AppCompatActivity
                 //mToolbar.setVisibility(View.GONE);
             }
         });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser user = YafaApplication.from(this).getAuth().getCurrentUser();
+        String userMail = user.getEmail();
+        String userName = user.getDisplayName();
+
+        TextView userNameView = headerView.findViewById(R.id.userName);
+        TextView userMailView = headerView.findViewById(R.id.userMail);
+
+        userNameView.setText(userName);
+        userMailView.setText(userMail);
+
+
     }
 
     @Override
