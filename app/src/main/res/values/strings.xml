@@ -1,3 +1,44 @@
 <resources>
     <string name="app_name">YetAnotherFitApp</string>
+    <string name="app_name_short">YAFA</string>
+    <string name="welcome">Добро пожаловать!</string>
+    <string name="sign_in">Войти</string>
+    <string name="registration">Зарегистрироваться</string>
+    <string name="yet_another_fitapp">Yet Another FitApp</string>
+    <string name="nickname">Никнейм</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+    <string name="sign_out">Выйти из аккаунта</string>
+    <string name="title_activity_nav_drawer">NavDrawer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="exerciseList">Список Упражнений</string>
+    <string name="exercise">Упражнение</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="about">Статистика</string>
+
+    <string name="hello_blank_fragment">Заготовка страницы About</string>
+    <string name="achievement">Достижения</string>
+    <string name="statistics">Статистика</string>
+    <string name="favourite">Любимое упражнение</string>
+    <string name="error_msg">Поле заполнено некорректно</string>
+    <string name="account_create_success">Аккаунт успешно создан</string>
+    <string name="user_sign_out">Выход из аккаунта</string>
+    <string name="name">Имя</string>
+    <string name="other">Other</string>
+    <string name="exercise_not_load">К сожалению, это упражнение еще не загружено на Ваше устройство :(</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="favourite_exercises">Избранное</string>
+    <string name="loaded_exercises">Загруженные упражнения</string>
+    <string name="howToOpenStat">Пройдите еще несколько упражнений, чтобы открыть статистику</string>
+    <string name="action_favourite">Favourite</string>
+    <string name="action_delete_from_local">Удалить</string>
+    <string name="action_save_to_local">Загрузить</string>
+    <string name="nsjdhbfkj">Любимое упражнение</string>
+    <string name="beginEx">Начать</string>
 </resources>

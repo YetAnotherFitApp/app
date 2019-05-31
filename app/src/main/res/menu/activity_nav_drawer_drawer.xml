@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/exerciseList"
+            android:icon="@drawable/list_of_ex"
+            android:title="@string/exerciseList" />
+        <item
+            android:id="@+id/favourite"
+            android:icon="@drawable/baseline_star_24"
+            android:title="@string/favourite_exercises" />
+        <item
+            android:id="@+id/loaded"
+            android:icon="@drawable/baseline_cloud_download_24"
+            android:title="@string/loaded_exercises" />
+        <item
+            android:id="@+id/statistic"
+            android:icon="@drawable/stats_icon"
+            android:title="@string/about" />
+
+    </group>
+
+    <item android:title="@string/other">
+        <menu>
+            <item
+                android:id="@+id/signOut"
+                android:icon="@drawable/sign_out_icon"
+                android:title="@string/sign_out" />
+        </menu>
+    </item>
+
+
+</menu>
